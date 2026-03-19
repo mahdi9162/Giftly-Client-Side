@@ -4,27 +4,26 @@ import Image from 'next/image';
 
 const HeroSection = () => {
   return (
-    <section className="py-10 md:py-14 lg:py-16">
-  
+    <section className="py-10 md:py-14 lg:py-16 px-3 lg:px-0">
       <Container>
         <div className="grid min-h-[65vh] items-center gap-10 lg:grid-cols-2 lg:gap-14">
           {/* left */}
-          <div className="max-w-2xl">
+          <div className="max-w-2xl text-center lg:text-left mx-auto">
             <div className="mb-4 inline-flex items-center rounded-full border border-primary/20 bg-white/80 px-4 py-2 text-sm font-medium text-primary shadow-sm">
               Smart AI Gift Finder
             </div>
 
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight text-slate-900 md:text-5xl lg:text-6xl">
+            <h1 className="max-w-2xl text-3xl md:text-5xl lg:text-6xl font-bold leading-tight text-slate-900 ">
               <span className="block">Let AI find the </span>
               <span className="font-script font-normal text-primary "> perfect </span>
               gift for you.
             </h1>
 
-            <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 md:text-lg">
+            <p className="mt-5 max-w-xl text-sm md:leading-7 text-slate-600 md:text-lg">
               Discover curated gift ideas or get instant AI recommendations tailored to any occasion, person, and budget.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col justify-center lg:justify-start gap-3 sm:flex-row">
               <button className="btn btn-primary rounded-xl px-6 text-white shadow-md">Browse Gifts</button>
               <button className="btn rounded-xl border border-slate-300 bg-white px-6 text-slate-700 shadow-sm hover:bg-slate-50">
                 Get AI Suggestions

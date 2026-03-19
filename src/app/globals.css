@@ -55,7 +55,6 @@ body {
 /* Hero Section */
 .hero-bg {
   position: relative;
-  overflow: hidden;
   isolation: isolate;
   background: linear-gradient(135deg, #fff8fb 0%, #fff5f7 30%, #f9f5ff 65%, #f4f8ff 100%);
 }

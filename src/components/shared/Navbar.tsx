@@ -26,38 +26,40 @@ const Navbar = () => {
     </>
   );
   return (
-    <Container>
-      <div className="navbar mt-5 rounded-[28px] border border-white/20 bg-white/10 px-5 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur-2xl">
-        <div className="navbar-start">
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
-              </svg>
+    <nav className="sticky top-4 z-50 px-3 md:px-0">
+      <Container>
+        <div className="navbar rounded-[28px] border border-white/20 bg-white/5 px-5 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur-lg">
+          <div className="navbar-start">
+            <div className="dropdown">
+              <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+                </svg>
+              </div>
+              <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                {nav}
+              </ul>
             </div>
-            <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-              {nav}
-            </ul>
+            <figure>
+              <Logo />
+            </figure>
           </div>
-          <figure>
-            <Logo />
-          </figure>
-        </div>
 
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">{nav}</ul>
-        </div>
+          <div className="navbar-center hidden lg:flex">
+            <ul className="menu menu-horizontal px-1">{nav}</ul>
+          </div>
 
-        <div className="navbar-end gap-5">
-          <Link className="btn btn-secondary" href={'/cart'}>
-            <ShoppingCart size={20} />
-          </Link>
-          <Link className="btn btn-primary" href={'/login'}>
-            Login
-          </Link>
+          <div className="navbar-end gap-5">
+            <Link className="btn btn-secondary" href={'/cart'}>
+              <ShoppingCart size={20} />
+            </Link>
+            <Link className="btn btn-primary" href={'/login'}>
+              Login
+            </Link>
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </nav>
   );
 };
 
