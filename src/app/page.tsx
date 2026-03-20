@@ -1,5 +1,6 @@
 import AIHowItWorks from '@/components/home/AIHowItWorks';
 import CategorySection from '@/components/home/CategorySection';
+import FAQ from '@/components/home/FAQ';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import HeroSection from '@/components/home/HeroSection';
 import Testimonials from '@/components/home/Testimonials';
@@ -27,6 +28,7 @@ export default function Home() {
       <AIHowItWorks />
       <WhyChooseUs />
       <Testimonials />
+      <FAQ />
     </>
   );
 }
