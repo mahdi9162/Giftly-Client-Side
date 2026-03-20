@@ -2,6 +2,7 @@ import AIHowItWorks from '@/components/home/AIHowItWorks';
 import CategorySection from '@/components/home/CategorySection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import HeroSection from '@/components/home/HeroSection';
+import WhyChooseUs from '@/components/home/WhyChooseUs';
 import Navbar from '@/components/shared/Navbar';
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
       <CategorySection />
       <FeaturedProducts />
       <AIHowItWorks />
+      <WhyChooseUs />
     </>
   );
 }
