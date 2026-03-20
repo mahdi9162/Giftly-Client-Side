@@ -6,6 +6,7 @@ import HeroSection from '@/components/home/HeroSection';
 import NewsletterCTA from '@/components/home/NewsletterCTA';
 import Testimonials from '@/components/home/Testimonials';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
+import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
       <Testimonials />
       <NewsletterCTA />
       <FAQ />
+      <Footer />
     </>
   );
 }
