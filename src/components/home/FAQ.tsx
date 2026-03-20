@@ -28,7 +28,6 @@ const faqs = [
 ];
 
 const FAQ = () => {
-  // only one item open at a time; null means all closed
   const [openId, setOpenId] = useState<number | null>(null);
 
   const toggle = (id: number) => {

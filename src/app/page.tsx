@@ -3,6 +3,7 @@ import CategorySection from '@/components/home/CategorySection';
 import FAQ from '@/components/home/FAQ';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import HeroSection from '@/components/home/HeroSection';
+import NewsletterCTA from '@/components/home/NewsletterCTA';
 import Testimonials from '@/components/home/Testimonials';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
 import Navbar from '@/components/shared/Navbar';
@@ -28,6 +29,7 @@ export default function Home() {
       <AIHowItWorks />
       <WhyChooseUs />
       <Testimonials />
+      <NewsletterCTA />
       <FAQ />
     </>
   );
