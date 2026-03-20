@@ -1,3 +1,4 @@
+import AIHowItWorks from '@/components/home/AIHowItWorks';
 import CategorySection from '@/components/home/CategorySection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import HeroSection from '@/components/home/HeroSection';
@@ -21,6 +22,7 @@ export default function Home() {
 
       <CategorySection />
       <FeaturedProducts />
+      <AIHowItWorks />
     </>
   );
 }
