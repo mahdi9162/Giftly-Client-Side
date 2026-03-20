@@ -1,4 +1,5 @@
 import CategorySection from '@/components/home/CategorySection';
+import FeaturedProducts from '@/components/home/FeaturedProducts';
 import HeroSection from '@/components/home/HeroSection';
 import Navbar from '@/components/shared/Navbar';
 
@@ -19,6 +20,7 @@ export default function Home() {
       </section>
 
       <CategorySection />
+      <FeaturedProducts />
     </>
   );
 }
