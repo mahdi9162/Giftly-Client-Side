@@ -56,7 +56,7 @@ const WhyChooseUs = () => {
 
         <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
           Designed to Make Gifting{" "}
-          <span className="text-primary">Effortless</span>
+          <span className="text-primary font-script">Effortless</span>
         </h2>
 
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-500 md:text-base md:leading-7">

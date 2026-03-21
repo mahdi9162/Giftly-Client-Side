@@ -53,9 +53,14 @@ const Navbar = () => {
             <Link className="btn btn-secondary" href={'/cart'}>
               <ShoppingCart size={20} />
             </Link>
-            <Link className="btn btn-primary" href={'/login'}>
+         <div className='flex gap-5'>
+             <Link className="btn btn-primary" href={'/login'}>
               Login
             </Link>
+            <Link className="btn btn-outline btn-secondary" href={'/register'}>
+              Register
+            </Link>
+         </div>
           </div>
         </div>
       </Container>

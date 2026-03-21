@@ -36,7 +36,7 @@ const NewsletterCTA = () => {
               </p>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
-                Get Gift Ideas <br className="hidden sm:block" />
+                Get <span className="font-script text-primary">Gift</span> Ideas <br className="hidden sm:block" />
                 Every Week
               </h2>
 
