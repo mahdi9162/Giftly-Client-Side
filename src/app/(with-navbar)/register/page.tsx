@@ -1,29 +1,69 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import Container from "@/components/shared/Container";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import Container from '@/components/shared/Container';
+import { useForm, useWatch } from 'react-hook-form';
+import { axiosInstance } from '@/lib/axios';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+
+type RegisterFormData = {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<RegisterFormData>();
+
+  const password = useWatch({
+    control,
+    name: 'password',
+  });
+
+  const registerFormSubmit = async (data: RegisterFormData) => {
+    const { fullName, email, password } = data;
+
+    const userInfo = {
+      name: fullName,
+      email,
+      password,
+    };
+
+    try {
+      await axiosInstance.post('/users/register', userInfo);
+
+      router.push('/');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      } else {
+        console.log(`An unexpected error occurred`, error);
+      }
+    }
+  };
 
   return (
     <section className="bg-[linear-gradient(180deg,#fff_0%,#fff7fb_100%)] py-8 md:py-10 lg:py-12">
       <Container>
-        <div className="overflow-hidden rounded-[32px] border border-rose-100/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <div className="grid min-h-[760px] grid-cols-1 lg:grid-cols-2">
+        <div className="overflow-hidden rounded-4xl border border-rose-100/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+          <div className="grid min-h-190 grid-cols-1 lg:grid-cols-2">
             {/* LEFT — image panel */}
             <div className="relative hidden lg:block">
-              <Image
-                src="/assets/images/register_image.webp"
-                alt="Giftly register visual"
-                fill
-                priority
-                className="object-cover"
-              />
+              <Image src="/assets/images/register_image.webp" alt="Giftly register visual" fill priority className="object-cover" />
 
               {/* overlay */}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.10)_0%,rgba(15,23,42,0.30)_45%,rgba(15,23,42,0.70)_100%)]" />
@@ -37,13 +77,10 @@ const RegisterPage = () => {
                   Join Giftly
                 </p>
 
-                <h2 className="mt-5 text-4xl font-bold leading-tight text-white drop-shadow-lg xl:text-5xl">
-                  Join the joy of gifting.
-                </h2>
+                <h2 className="mt-5 text-4xl font-bold leading-tight text-white drop-shadow-lg xl:text-5xl">Join the joy of gifting.</h2>
 
                 <p className="mt-3 max-w-md text-sm leading-7 text-white/75 xl:text-base">
-                  Discover thoughtful gifts for every occasion and make every
-                  surprise feel a little more special.
+                  Discover thoughtful gifts for every occasion and make every surprise feel a little more special.
                 </p>
               </div>
             </div>
@@ -53,23 +90,13 @@ const RegisterPage = () => {
               <div className="w-full max-w-md">
                 {/* logo */}
                 <Link href="/" className="inline-block">
-                  <Image
-                    src="/assets/logo/logo-dark.svg"
-                    alt="Giftly"
-                    width={118}
-                    height={42}
-                    className="mb-8"
-                  />
+                  <Image src="/assets/logo/logo-dark.svg" alt="Giftly" width={118} height={42} className="mb-8" />
                 </Link>
 
                 {/* heading */}
                 <div>
-                  <p className="text-sm font-medium uppercase tracking-[0.18em] text-rose-500">
-                    Create account
-                  </p>
-                  <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-                    Create your account
-                  </h1>
+                  <p className="text-sm font-medium uppercase tracking-[0.18em] text-rose-500">Create account</p>
+                  <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Create your account</h1>
                   <p className="mt-3 text-sm leading-6 text-slate-500 md:text-base">
                     Join Giftly and discover thoughtful gifting made easier.
                   </p>
@@ -78,7 +105,7 @@ const RegisterPage = () => {
                 {/* Google button */}
                 <button
                   type="button"
-                  className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-rose-200 hover:bg-rose-50/50"
+                  className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:border-rose-200 hover:bg-rose-50/50 cursor-pointer"
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -104,86 +131,94 @@ const RegisterPage = () => {
                 {/* divider */}
                 <div className="my-6 flex items-center gap-3">
                   <div className="h-px flex-1 bg-slate-200" />
-                  <span className="text-xs font-medium text-slate-400">
-                    or continue with
-                  </span>
+                  <span className="text-xs font-medium text-slate-400">or continue with</span>
                   <div className="h-px flex-1 bg-slate-200" />
                 </div>
 
                 {/* form */}
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit(registerFormSubmit)} className="space-y-4">
                   {/* full name */}
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Full Name
-                    </label>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Full Name</label>
                     <input
                       type="text"
                       placeholder="Your full name"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100"
+                      {...register('fullName', { required: 'Full name is required' })}
+                      className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100 ${
+                        errors.fullName ? 'border-red-500' : 'border-slate-200'
+                      }`}
                     />
+                    {errors.fullName && <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>}
                   </div>
 
                   {/* email */}
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Email Address
-                    </label>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Email Address</label>
                     <input
                       type="email"
                       placeholder="you@example.com"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100"
+                      {...register('email', { required: 'Email is required' })}
+                      className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100 ${
+                        errors.email ? 'border-red-500' : 'border-slate-200'
+                      }`}
                     />
+                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
                   </div>
 
                   {/* password */}
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Password
-                    </label>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Password</label>
                     <div className="relative">
                       <input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Create a password"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 pr-11 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100"
+                        {...register('password', {
+                          required: 'Password is required',
+                          minLength: {
+                            value: 6,
+                            message: 'Password must be at least 6 characters',
+                          },
+                        })}
+                        className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 pr-11 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100 ${
+                          errors.password ? 'border-red-500' : 'border-slate-200'
+                        }`}
                       />
+                      {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
                       <button
                         type="button"
                         onClick={() => setShowPassword((p) => !p)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
 
                   {/* confirm password */}
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Confirm Password
-                    </label>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Confirm Password</label>
                     <div className="relative">
                       <input
-                        type={showConfirm ? "text" : "password"}
-                        placeholder="Repeat your password"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 pr-11 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100"
+                        type={showConfirm ? 'text' : 'password'}
+                        placeholder="Confirm your password"
+                        {...register('confirmPassword', {
+                          required: 'Confirm Password is required',
+                          validate: (value) => value === password || 'Password do not match',
+                        })}
+                        className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 pr-11 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100 ${
+                          errors.confirmPassword ? 'border-red-500' : 'border-slate-200'
+                        }`}
                       />
+                      {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword.message}</p>}
+
                       <button
                         type="button"
                         onClick={() => setShowConfirm((p) => !p)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
-                        aria-label={showConfirm ? "Hide password" : "Show password"}
+                        aria-label={showConfirm ? 'Hide password' : 'Show password'}
                       >
-                        {showConfirm ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
+                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
@@ -191,7 +226,7 @@ const RegisterPage = () => {
                   {/* submit */}
                   <button
                     type="submit"
-                    className="mt-2 w-full rounded-2xl bg-primary px-4 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(236,72,153,0.22)] transition-all duration-200 hover:brightness-95"
+                    className="mt-2 w-full rounded-2xl bg-primary px-4 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(236,72,153,0.22)] transition-all duration-200 hover:brightness-95 cursor-pointer"
                   >
                     Create Account
                   </button>
@@ -199,7 +234,7 @@ const RegisterPage = () => {
 
                 {/* login link */}
                 <p className="mt-6 text-center text-sm text-slate-500">
-                  Already have an account?{" "}
+                  Already have an account?{' '}
                   <Link href="/login" className="font-semibold text-primary hover:underline">
                     Log in
                   </Link>
