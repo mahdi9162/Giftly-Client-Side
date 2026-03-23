@@ -1,28 +1,57 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import Container from "@/components/shared/Container";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import Container from '@/components/shared/Container';
+import { useForm } from 'react-hook-form';
+import { axiosInstance } from '@/lib/axios';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+
+type LoginFormData = {
+  email: string;
+  password: string;
+};
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
+
+  const loginFormSubmit = async (data: LoginFormData) => {
+    const { email, password } = data;
+
+    const userInfo = {
+      email,
+      password,
+    };
+
+    try {
+      await axiosInstance.post('/users/login', userInfo);
+      router.push('/');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      } else {
+        console.log(`An unexpected error occurred`, error);
+      }
+    }
+  };
 
   return (
     <section className="bg-[linear-gradient(180deg,#fff_0%,#fff7fb_100%)] py-8 md:py-10 lg:py-12">
       <Container>
-        <div className="overflow-hidden rounded-[32px] border border-rose-100/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <div className="grid min-h-[760px] grid-cols-1 lg:grid-cols-2">
+        <div className="overflow-hidden rounded-4xl border border-rose-100/70 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+          <div className="grid min-h-190 grid-cols-1 lg:grid-cols-2">
             {/* LEFT — image panel */}
             <div className="relative hidden lg:block">
-              <Image
-                src="/assets/images/login_image.webp"
-                alt="Giftly login visual"
-                fill
-                priority
-                className="object-cover"
-              />
+              <Image src="/assets/images/login_image.webp" alt="Giftly login visual" fill priority className="object-cover" />
 
               {/* overlay */}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.10)_0%,rgba(15,23,42,0.30)_45%,rgba(15,23,42,0.70)_100%)]" />
@@ -41,8 +70,7 @@ const LoginPage = () => {
                 </h2>
 
                 <p className="mt-3 max-w-md text-sm leading-7 text-white/75 xl:text-base">
-                  Pick up where you left off and discover thoughtful gifts for
-                  every moment that matters.
+                  Pick up where you left off and discover thoughtful gifts for every moment that matters.
                 </p>
               </div>
             </div>
@@ -52,26 +80,15 @@ const LoginPage = () => {
               <div className="w-full max-w-md">
                 {/* logo */}
                 <Link href="/" className="inline-block">
-                  <Image
-                    src="/assets/logo/logo-dark.svg"
-                    alt="Giftly"
-                    width={118}
-                    height={42}
-                    className="mb-8"
-                  />
+                  <Image src="/assets/logo/logo-dark.svg" alt="Giftly" width={118} height={42} className="mb-8" />
                 </Link>
 
                 {/* heading */}
                 <div>
-                  <p className="text-sm font-medium uppercase tracking-[0.18em] text-rose-500">
-                    Sign in
-                  </p>
-                  <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-                    Welcome back
-                  </h1>
+                  <p className="text-sm font-medium uppercase tracking-[0.18em] text-rose-500">Sign in</p>
+                  <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Welcome back</h1>
                   <p className="mt-3 text-sm leading-6 text-slate-500 md:text-base">
-                    Sign in to your Giftly account and continue your gifting
-                    journey.
+                    Sign in to your Giftly account and continue your gifting journey.
                   </p>
                 </div>
 
@@ -104,57 +121,58 @@ const LoginPage = () => {
                 {/* divider */}
                 <div className="my-6 flex items-center gap-3">
                   <div className="h-px flex-1 bg-slate-200" />
-                  <span className="text-xs font-medium text-slate-400">
-                    or continue with
-                  </span>
+                  <span className="text-xs font-medium text-slate-400">or continue with</span>
                   <div className="h-px flex-1 bg-slate-200" />
                 </div>
 
                 {/* form */}
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit(loginFormSubmit)} className="space-y-4">
                   {/* email */}
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Email Address
-                    </label>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Email Address</label>
                     <input
                       type="email"
                       placeholder="you@example.com"
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100"
+                      {...register('email', { required: 'Email is required' })}
+                      className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100 ${
+                        errors.email ? 'border-red-500' : 'border-slate-200'
+                      }`}
                     />
+                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
                   </div>
 
                   {/* password */}
                   <div>
                     <div className="mb-1.5 flex items-center justify-between">
-                      <label className="block text-sm font-medium text-slate-700">
-                        Password
-                      </label>
-                      <Link
-                        href="/forgot-password"
-                        className="text-xs font-medium text-primary hover:underline"
-                      >
+                      <label className="block text-sm font-medium text-slate-700">Password</label>
+                      <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
                         Forgot password?
                       </Link>
                     </div>
 
                     <div className="relative">
                       <input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 pr-11 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100"
+                        {...register('password', {
+                          required: 'Password is required',
+                          minLength: {
+                            value: 6,
+                            message: 'Password must be at least 6 characters',
+                          },
+                        })}
+                        className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 pr-11 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:bg-white focus:ring-4 focus:ring-rose-100 ${
+                          errors.password ? 'border-red-500' : 'border-slate-200'
+                        }`}
                       />
+                      {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
                       <button
                         type="button"
                         onClick={() => setShowPassword((p) => !p)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
@@ -162,10 +180,7 @@ const LoginPage = () => {
                   {/* remember me */}
                   <div className="flex items-center justify-between pt-1">
                     <label className="flex items-center gap-2 text-sm text-slate-600">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/30"
-                      />
+                      <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/30" />
                       Remember me
                     </label>
                   </div>
@@ -181,7 +196,7 @@ const LoginPage = () => {
 
                 {/* register link */}
                 <p className="mt-6 text-center text-sm text-slate-500">
-                  Don&apos;t have an account?{" "}
+                  Don&apos;t have an account?{' '}
                   <Link href="/register" className="font-semibold text-primary hover:underline">
                     Create one
                   </Link>
