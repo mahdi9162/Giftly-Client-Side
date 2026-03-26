@@ -1,9 +1,10 @@
+'use client';
 import React from 'react';
 import Container from './Container';
 import NavLink from '../buttons/NavLink';
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
 import Logo from './Logo';
+import { useAuth } from '@/hooks/useAuth';
 
 const Navbar = () => {
   const nav = (
@@ -25,6 +26,9 @@ const Navbar = () => {
       </li>
     </>
   );
+
+  const { user, loading, logout } = useAuth();
+
   return (
     <nav className="sticky top-4 z-50 px-3 md:px-0">
       <Container>
@@ -50,17 +54,22 @@ const Navbar = () => {
           </div>
 
           <div className="navbar-end gap-5">
-            <Link className="btn btn-secondary" href={'/cart'}>
-              <ShoppingCart size={20} />
-            </Link>
-            <div className="flex gap-5">
-              <Link className="btn btn-primary" href={'/login'}>
-                Login
-              </Link>
-              <Link className="btn btn-outline btn-secondary" href={'/register'}>
-                Register
-              </Link>
-            </div>
+            {loading ? (
+              <p className="text-sm text-slate-500">Loading...</p>
+            ) : user ? (
+              <button onClick={logout} className="btn btn-primary">
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link className="btn btn-primary" href="/login">
+                  Login
+                </Link>
+                <Link className="btn btn-outline btn-secondary" href="/register">
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </Container>

@@ -16,7 +16,7 @@ export const useAuth = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await axiosInstance.get('/me');
+      const res = await axiosInstance.get('/users/me');
 
       const result = await res.data;
 
@@ -35,7 +35,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      const res = await axiosInstance.post('/logout');
+      const res = await axiosInstance.post('users/logout');
       const result = await res.data;
 
       if (result.success) {
