@@ -5,6 +5,7 @@ import NavLink from '../buttons/NavLink';
 import Link from 'next/link';
 import Logo from './Logo';
 import { useAuth } from '@/hooks/useAuth';
+import Image from 'next/image';
 
 const Navbar = () => {
   const nav = (
@@ -41,7 +42,25 @@ const Navbar = () => {
                 </svg>
               </div>
               <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                {nav}
+                {
+                  <>
+                    {nav}
+                    {!user && (
+                      <div className="flex flex-col gap-4">
+                        <li className="mt-2">
+                          <Link className="btn btn-primary w-full" href="/login">
+                            Login
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="btn btn-outline btn-secondary w-full" href="/register">
+                            Register
+                          </Link>
+                        </li>
+                      </div>
+                    )}
+                  </>
+                }
               </ul>
             </div>
             <figure>
@@ -57,17 +76,42 @@ const Navbar = () => {
             {loading ? (
               <p className="text-sm text-slate-500">Loading...</p>
             ) : user ? (
-              <button onClick={logout} className="btn btn-primary">
-                Logout
-              </button>
+              <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="avatar avatar-online cursor-pointer  transition hover:scale-105">
+                  <div className="w-12 rounded-full">
+                    <Image src="/assets/images/avatar.svg" alt="User Avatar" width={48} height={48} className="object-cover" />
+                  </div>
+                </div>
+
+                <ul
+                  tabIndex={0}
+                  className="menu dropdown-content z-100 mt-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg"
+                >
+                  <li className="pointer-events-none border-b border-slate-100 px-4 py-2">
+                    <p className="text-sm font-semibold text-slate-800">{user?.name}</p>
+                    <p className="text-xs text-slate-500">{user?.email}</p>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/profile">Profile</Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/orders">My Orders</Link>
+                  </li>
+                  <li>
+                    <button onClick={logout}>Logout</button>
+                  </li>
+                </ul>
+              </div>
             ) : (
               <>
-                <Link className="btn btn-primary" href="/login">
-                  Login
-                </Link>
-                <Link className="btn btn-outline btn-secondary" href="/register">
-                  Register
-                </Link>
+                <div className="hidden lg:flex items-center gap-3">
+                  <Link className="btn btn-primary" href="/login">
+                    Login
+                  </Link>
+                  <Link className="btn btn-outline btn-secondary" href="/register">
+                    Register
+                  </Link>
+                </div>
               </>
             )}
           </div>

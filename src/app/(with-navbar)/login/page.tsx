@@ -51,7 +51,7 @@ const LoginPage = () => {
           <div className="grid min-h-190 grid-cols-1 lg:grid-cols-2">
             {/* LEFT — image panel */}
             <div className="relative hidden lg:block">
-              <Image src="/assets/images/login_image.webp" alt="Giftly login visual" fill priority className="object-cover" />
+              <Image src="/assets/images/login_image.webp" alt="Giftly login visual" fill sizes="120" priority className="object-cover" />
 
               {/* overlay */}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.10)_0%,rgba(15,23,42,0.30)_45%,rgba(15,23,42,0.70)_100%)]" />
@@ -80,7 +80,7 @@ const LoginPage = () => {
               <div className="w-full max-w-md">
                 {/* logo */}
                 <Link href="/" className="inline-block">
-                  <Image src="/assets/logo/logo-dark.svg" alt="Giftly" width={118} height={42} className="mb-8" />
+                  <Image src="/assets/logo/logo-dark.svg" alt="Giftly" width={118} height={42} className="w-24 h-auto mb-8" />
                 </Link>
 
                 {/* heading */}
