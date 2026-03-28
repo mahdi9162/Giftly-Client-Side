@@ -6,8 +6,11 @@ import Link from 'next/link';
 import Logo from './Logo';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
+import { ShoppingCart } from 'lucide-react';
 
 const Navbar = () => {
+  const { user, loading, logout } = useAuth();
+
   const nav = (
     <>
       <li>
@@ -19,16 +22,19 @@ const Navbar = () => {
       <li>
         <NavLink href={'/ai-gift-finder'}>AI Finder</NavLink>
       </li>
+      {user && (
+        <li>
+          <NavLink href={'/dashboard'}>Dashboard</NavLink>
+        </li>
+      )}
       <li>
         <NavLink href={'/contact'}>Contact</NavLink>
       </li>
       <li>
-        <NavLink href={'/cart'}>Cart</NavLink>
+        <NavLink href={'/about'}>About</NavLink>
       </li>
     </>
   );
-
-  const { user, loading, logout } = useAuth();
 
   return (
     <nav className="sticky top-4 z-50 px-3 md:px-0">
@@ -72,13 +78,18 @@ const Navbar = () => {
             <ul className="menu menu-horizontal px-1">{nav}</ul>
           </div>
 
-          <div className="navbar-end gap-5">
+          <div className="navbar-end gap-3">
+            <div>
+              <Link className="btn btn-secondary" href="/cart">
+                <ShoppingCart />
+              </Link>
+            </div>
             {loading ? (
               <p className="text-sm text-slate-500">Loading...</p>
             ) : user ? (
               <div className="dropdown dropdown-end">
                 <div tabIndex={0} role="button" className="avatar avatar-online cursor-pointer  transition hover:scale-105">
-                  <div className="w-12 rounded-full">
+                  <div className="w-10 md:w-12 rounded-full">
                     <Image src="/assets/images/avatar.svg" alt="User Avatar" width={48} height={48} className="object-cover" />
                   </div>
                 </div>
@@ -92,13 +103,19 @@ const Navbar = () => {
                     <p className="text-xs text-slate-500">{user?.email}</p>
                   </li>
                   <li>
-                    <Link href="/dashboard/profile">Profile</Link>
+                    <Link className="text-sm md:text-base" href="/dashboard/profile">
+                      Profile
+                    </Link>
                   </li>
                   <li>
-                    <Link href="/dashboard/orders">My Orders</Link>
+                    <Link className="text-sm md:text-base" href="/dashboard/orders">
+                      My Orders
+                    </Link>
                   </li>
                   <li>
-                    <button onClick={logout}>Logout</button>
+                    <button className="text-sm md:text-base" onClick={logout}>
+                      Logout
+                    </button>
                   </li>
                 </ul>
               </div>
