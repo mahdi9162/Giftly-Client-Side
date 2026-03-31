@@ -64,6 +64,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
   const searchTerm = resolvedSearchParams.search || '';
   const priceSort = (resolvedSearchParams.sort as 'featured' | 'low-to-high' | 'high-to-low') || 'featured';
   const ratingFilter = (resolvedSearchParams.rating as 'all' | '4-up' | '4.5-up') || 'all';
+  const currentPage = Number(resolvedSearchParams.page);
 
   //   API Call
   const productResponse = await getProducts(resolvedSearchParams);
@@ -71,6 +72,19 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
   const meta = productResponse.meta;
 
   const currentMeta = categoryMeta[selectedCategory];
+
+  const getPageHref = (page: number) => {
+    const params = new URLSearchParams();
+
+    if (selectedCategory !== 'all') params.set('category', selectedCategory);
+    if (searchTerm) params.set('search', searchTerm);
+    if (priceSort !== 'featured') params.set('sort', priceSort);
+    if (ratingFilter !== 'all') params.set('rating', ratingFilter);
+
+    params.set('page', String(page));
+
+    return `/shop?${params.toString()}`;
+  };
 
   const getCategoryHref = (categoryValue: Category) => {
     const params = new URLSearchParams();
@@ -167,6 +181,64 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
               </div>
             </div>
             <ProductGrid products={products} categories={categories} />
+
+            {/* pagination */}
+            {meta.totalPages > 1 && (
+              <div className="mt-12 md:mt-20 flex flex-col items-center gap-4">
+                {/* Page info for mobile/clear view */}
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                  Viewing Page <span className="text-primary">{currentPage}</span> of {meta.totalPages}
+                </p>
+
+                <div className="flex items-center gap-2">
+                  {/* Previous Button */}
+                  <Link
+                    href={getPageHref(currentPage - 1)}
+                    className={`flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all ${
+                      currentPage === 1
+                        ? 'pointer-events-none bg-slate-100 text-slate-300'
+                        : 'bg-white text-slate-700 shadow-sm hover:border-primary hover:text-primary border border-slate-200'
+                    }`}
+                  >
+                    ← <span className="hidden sm:inline">Previous</span>
+                  </Link>
+
+                  {/* Numbered Pages (Optional but clearer) */}
+                  <div className="flex items-center gap-1">
+                    {[...Array(meta.totalPages)].map((_, i) => {
+                      const pageNum = i + 1;
+                      const isActive = currentPage === pageNum;
+
+                      return (
+                        <Link
+                          key={pageNum}
+                          href={getPageHref(pageNum)}
+                          className={`flex h-11 w-11 items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                            isActive
+                              ? 'bg-primary text-white shadow-lg shadow-rose-200 scale-110'
+                              : 'bg-white text-slate-600 hover:bg-rose-50 border border-slate-100'
+                          }`}
+                        >
+                          {pageNum}
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  {/* Next Button */}
+                  <Link
+                    href={getPageHref(currentPage + 1)}
+                    className={`flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all ${
+                      currentPage === meta.totalPages
+                        ? 'pointer-events-none bg-slate-100 text-slate-300'
+                        : 'bg-white text-slate-700 shadow-sm hover:border-primary hover:text-primary border border-slate-200'
+                    }`}
+                  >
+                    <span className="hidden sm:inline">Next</span> →
+                  </Link>
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </Container>
