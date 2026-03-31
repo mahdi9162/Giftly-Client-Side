@@ -1,27 +1,11 @@
-'use client';
-
-import { useEffect, useMemo, useState } from 'react';
 import Container from '@/components/shared/Container';
-import { axiosInstance } from '@/lib/axios';
 import ProductGrid from '@/components/shop/ProductGrid';
 import ProductFilters from '@/components/shop/ProductFilters';
 import { SlidersHorizontal } from 'lucide-react';
+import { getProducts } from '@/lib/api/products';
+import Link from 'next/link';
 
 type Category = 'all' | 'birthday' | 'anniversary' | 'for-him' | 'for-her' | 'family' | 'personalized';
-
-type Product = {
-  _id: string;
-  name: string;
-  category: Exclude<Category, 'all'>;
-  description: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  badge?: 'Best Seller' | 'New';
-  image: string;
-  alt: string;
-  stock: number;
-};
 
 const categories: { label: string; value: Category }[] = [
   { label: 'All', value: 'all' },
@@ -64,57 +48,46 @@ const categoryMeta: Record<Category, { title: string; subtitle: string }> = {
   },
 };
 
-export default function ShopPage() {
-  const [selectedCategory, setSelectedCategory] = useState<Category>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [priceSort, setPriceSort] = useState<'featured' | 'low-to-high' | 'high-to-low'>('featured');
-  const [ratingFilter, setRatingFilter] = useState<'all' | '4-up' | '4.5-up'>('all');
-  const [products, setProducts] = useState<Product[]>([]);
+type SearchParams = Promise<{
+  category?: string;
+  search?: string;
+  sort?: string;
+  rating?: string;
+  page?: string;
+}>;
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axiosInstance.get('/products');
-        setProducts(res.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProducts();
-  }, []);
+export default async function ShopPage({ searchParams }: { searchParams: SearchParams }) {
+  // get paramiter from URL
+  const resolvedSearchParams = await searchParams;
 
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
+  const selectedCategory = (resolvedSearchParams.category as Category) || 'all';
+  const searchTerm = resolvedSearchParams.search || '';
+  const priceSort = (resolvedSearchParams.sort as 'featured' | 'low-to-high' | 'high-to-low') || 'featured';
+  const ratingFilter = (resolvedSearchParams.rating as 'all' | '4-up' | '4.5-up') || 'all';
 
-    if (selectedCategory !== 'all') {
-      result = result.filter((product) => product.category === selectedCategory);
-    }
-
-    if (searchTerm.trim()) {
-      const query = searchTerm.toLowerCase();
-      result = result.filter((product) => product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query));
-    }
-
-    if (ratingFilter === '4-up') {
-      result = result.filter((product) => product.rating >= 4);
-    }
-
-    if (ratingFilter === '4.5-up') {
-      result = result.filter((product) => product.rating >= 4.5);
-    }
-
-    if (priceSort === 'low-to-high') {
-      result.sort((a, b) => a.price - b.price);
-    }
-
-    if (priceSort === 'high-to-low') {
-      result.sort((a, b) => b.price - a.price);
-    }
-
-    return result;
-  }, [products, selectedCategory, searchTerm, priceSort, ratingFilter]);
+  //   API Call
+  const productResponse = await getProducts(resolvedSearchParams);
+  const products = productResponse.data;
+  const meta = productResponse.meta;
 
   const currentMeta = categoryMeta[selectedCategory];
+
+  const getCategoryHref = (categoryValue: Category) => {
+    const params = new URLSearchParams();
+
+    if (categoryValue !== 'all') {
+      params.set('category', categoryValue);
+    }
+
+    if (searchTerm) params.set('search', searchTerm);
+    if (priceSort !== 'featured') params.set('sort', priceSort);
+    if (ratingFilter !== 'all') params.set('rating', ratingFilter);
+
+    params.set('page', '1');
+
+    const query = params.toString();
+    return query ? `/shop?${query}` : '/shop';
+  };
 
   return (
     <main className="px-4 py-8 md:px-6 lg:px-8">
@@ -144,10 +117,9 @@ export default function ShopPage() {
                   const active = selectedCategory === category.value;
 
                   return (
-                    <button
+                    <Link
                       key={category.value}
-                      type="button"
-                      onClick={() => setSelectedCategory(category.value)}
+                      href={getCategoryHref(category.value)}
                       className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-700 cursor-pointer ${
                         active
                           ? 'bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-[0_10px_25px_rgba(244,114,182,0.28)]'
@@ -156,7 +128,7 @@ export default function ShopPage() {
                     >
                       <span>{category.label}</span>
                       {active && <span className="text-xs">•</span>}
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
@@ -168,20 +140,16 @@ export default function ShopPage() {
             <ProductFilters
               categories={categories}
               selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
               searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
               priceSort={priceSort}
-              setPriceSort={setPriceSort}
               ratingFilter={ratingFilter}
-              setRatingFilter={setRatingFilter}
             />
 
             {/* Results Top */}
             <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-slate-900 md:text-2xl">{currentMeta.title}</h2>
-                <p className="mt-1 text-sm text-slate-500">{filteredProducts.length} products found</p>
+                <p className="mt-1 text-sm text-slate-500">{meta?.totalProducts ?? products.length} products found</p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
@@ -198,7 +166,7 @@ export default function ShopPage() {
                 )}
               </div>
             </div>
-            <ProductGrid products={filteredProducts} categories={categories} />
+            <ProductGrid products={products} categories={categories} />
           </section>
         </div>
       </Container>

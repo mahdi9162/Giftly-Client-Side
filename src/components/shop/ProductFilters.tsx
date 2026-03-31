@@ -1,35 +1,54 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronDown, Search, SlidersHorizontal } from 'lucide-react';
 
 type Category = 'all' | 'birthday' | 'anniversary' | 'for-him' | 'for-her' | 'family' | 'personalized';
 
 type ProductFiltersProps = {
   categories: { label: string; value: Category }[];
-
   selectedCategory: Category;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<Category>>;
-
   searchTerm: string;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-
   priceSort: 'featured' | 'low-to-high' | 'high-to-low';
-  setPriceSort: React.Dispatch<React.SetStateAction<'featured' | 'low-to-high' | 'high-to-low'>>;
-
   ratingFilter: 'all' | '4-up' | '4.5-up';
-  setRatingFilter: React.Dispatch<React.SetStateAction<'all' | '4-up' | '4.5-up'>>;
 };
 
-export default function ProductFilters({
-  categories,
-  selectedCategory,
-  setSelectedCategory,
-  searchTerm,
-  setSearchTerm,
-  priceSort,
-  setPriceSort,
-  ratingFilter,
-  setRatingFilter,
-}: ProductFiltersProps) {
+export default function ProductFilters({ categories, selectedCategory, searchTerm, priceSort, ratingFilter }: ProductFiltersProps) {
+  const router = useRouter();
+  const currentParams = useSearchParams();
+  const [draftSearch, setDraftSearch] = useState(searchTerm);
+
+  const updateQuery = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(currentParams.toString());
+
+      if (!value || value === 'all' || value === 'featured') {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+
+      params.set('page', '1');
+      router.push(`/shop?${params.toString()}`);
+    },
+    [currentParams, router],
+  );
+
+  useEffect(() => {
+    setDraftSearch(searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (draftSearch !== searchTerm) {
+        updateQuery('search', draftSearch);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [draftSearch, searchTerm, updateQuery]);
+
   return (
     <>
       {/* Right Content Filters */}
@@ -53,7 +72,7 @@ export default function ProductFilters({
                   <button
                     key={category.value}
                     type="button"
-                    onClick={() => setSelectedCategory(category.value)}
+                    onClick={() => updateQuery('category', category.value)}
                     className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
                       active
                         ? 'bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-[0_10px_25px_rgba(244,114,182,0.28)]'
@@ -78,8 +97,8 @@ export default function ProductFilters({
               <input
                 type="text"
                 placeholder="Search gifts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={draftSearch}
+                onChange={(e) => setDraftSearch(e.target.value)}
                 className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-rose-300 focus:bg-white"
               />
             </div>
@@ -87,7 +106,7 @@ export default function ProductFilters({
             {/* Price Sort */}
             <select
               value={priceSort}
-              onChange={(e) => setPriceSort(e.target.value as 'featured' | 'low-to-high' | 'high-to-low')}
+              onChange={(e) => updateQuery('sort', e.target.value)}
               className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition-all focus:border-rose-300 focus:bg-white"
             >
               <option value="featured">Sort: Featured</option>
@@ -98,7 +117,7 @@ export default function ProductFilters({
             {/* Rating Filter */}
             <select
               value={ratingFilter}
-              onChange={(e) => setRatingFilter(e.target.value as 'all' | '4-up' | '4.5-up')}
+              onChange={(e) => updateQuery('rating', e.target.value)}
               className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition-all focus:border-rose-300 focus:bg-white"
             >
               <option value="all">Rating: All</option>
