@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Edit, Eye, Package2, Plus, Search, SlidersHorizontal, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type Product = {
   id: string;
@@ -107,15 +108,18 @@ export default function AdminProductsPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button className="inline-flex items-center gap-2 rounded-2xl border border-orange-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-orange-50">
+            <button className="inline-flex items-center gap-2 rounded-2xl border border-orange-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-orange-50 cursor-pointer">
               <SlidersHorizontal className="size-4" />
               Bulk Actions
             </button>
 
-            <button className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-primary to-fuchsia-500 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5">
+            <Link
+              href={'/dashboard/admin/products/create'}
+              className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-primary to-fuchsia-500 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 cursor-pointer"
+            >
               <Plus className="size-4" />
               Add Product
-            </button>
+            </Link>
           </div>
         </div>
       </section>
