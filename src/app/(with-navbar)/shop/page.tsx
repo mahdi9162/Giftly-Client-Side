@@ -64,12 +64,13 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
   const searchTerm = resolvedSearchParams.search || '';
   const priceSort = (resolvedSearchParams.sort as 'featured' | 'low-to-high' | 'high-to-low') || 'featured';
   const ratingFilter = (resolvedSearchParams.rating as 'all' | '4-up' | '4.5-up') || 'all';
-  const currentPage = Number(resolvedSearchParams.page);
+  const currentPage = Number(resolvedSearchParams.page) || 1;
 
   //   API Call
   const productResponse = await getProducts(resolvedSearchParams);
   const products = productResponse.data;
   const meta = productResponse.meta;
+  const totalPages = meta?.totalPages || 1;
 
   const currentMeta = categoryMeta[selectedCategory];
 
@@ -183,11 +184,11 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
             <ProductGrid products={products} categories={categories} />
 
             {/* pagination */}
-            {meta.totalPages > 1 && (
+            {totalPages > 1 && (
               <div className="mt-12 md:mt-20 flex flex-col items-center gap-4">
                 {/* Page info for mobile/clear view */}
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                  Viewing Page <span className="text-primary">{currentPage}</span> of {meta.totalPages}
+                  Viewing Page <span className="text-primary">{currentPage}</span> of {totalPages}
                 </p>
 
                 <div className="flex items-center gap-2">
@@ -203,9 +204,9 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
                     ← <span className="hidden sm:inline">Previous</span>
                   </Link>
 
-                  {/* Numbered Pages (Optional but clearer) */}
+                  {/* Numbered Pages */}
                   <div className="flex items-center gap-1">
-                    {[...Array(meta.totalPages)].map((_, i) => {
+                    {[...Array(totalPages)].map((_, i) => {
                       const pageNum = i + 1;
                       const isActive = currentPage === pageNum;
 
@@ -229,7 +230,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
                   <Link
                     href={getPageHref(currentPage + 1)}
                     className={`flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all ${
-                      currentPage === meta.totalPages
+                      currentPage === totalPages
                         ? 'pointer-events-none bg-slate-100 text-slate-300'
                         : 'bg-white text-slate-700 shadow-sm hover:border-primary hover:text-primary border border-slate-200'
                     }`}
