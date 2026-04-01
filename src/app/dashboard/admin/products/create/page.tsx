@@ -15,6 +15,7 @@ type ProductFormData = {
   image: FileList;
   alt: string;
   stock: number;
+  status: string;
   featured: boolean;
   featuredOrder?: number;
   badge?: 'Best Seller' | 'New';
@@ -22,6 +23,7 @@ type ProductFormData = {
   reviews: number;
 };
 
+type status = 'Active' | 'Draft' | 'Out of Stock';
 type Category = 'birthday' | 'anniversary' | 'for-him' | 'for-her' | 'family' | 'personalized';
 
 const categoryOptions: { value: Category; label: string }[] = [
@@ -32,6 +34,8 @@ const categoryOptions: { value: Category; label: string }[] = [
   { value: 'family', label: 'Family' },
   { value: 'personalized', label: 'Personalized' },
 ];
+
+const statusOptions: status[] = ['Active', 'Draft', 'Out of Stock'];
 
 export default function CreateProductPage() {
   const {
@@ -47,6 +51,7 @@ export default function CreateProductPage() {
       price: 0,
       alt: '',
       stock: 0,
+      status: '',
       featured: false,
       featuredOrder: undefined,
       badge: undefined,
@@ -98,6 +103,7 @@ export default function CreateProductPage() {
         image: imageUrl,
         alt: data.alt,
         stock: data.stock,
+        status: data.status,
         featured: data.featured,
         featuredOrder: data.featured ? data.featuredOrder : undefined,
         badge: data.badge || undefined,
@@ -208,7 +214,7 @@ export default function CreateProductPage() {
               <h2 className="text-lg font-black text-slate-900">Pricing & Inventory</h2>
               <p className="mt-1 text-sm text-slate-500">Set the product price and stock quantity.</p>
 
-              <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
                 {/* Price */}
                 <div>
                   <label className="mb-2 block text-sm font-bold text-slate-700">Price</label>
@@ -246,6 +252,23 @@ export default function CreateProductPage() {
                     className="input input-bordered w-full rounded-2xl border-slate-200 bg-white"
                   />
                   {errors.stock && <p className="mt-2 text-sm font-medium text-rose-500">{errors.stock.message}</p>}
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="mb-2 block text-sm font-bold text-slate-700">Status</label>
+                  <select
+                    {...register('status', { required: 'Status is required' })}
+                    className="select select-bordered w-full rounded-2xl border-slate-200 bg-white cursor-pointer"
+                    defaultValue=""
+                  >
+                    <option value="" disabled hidden>
+                      Select Product Status
+                    </option>
+                    {statusOptions.map((status) => (
+                      <option key={status}>{status}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
@@ -406,7 +429,7 @@ export default function CreateProductPage() {
             <div className="flex flex-wrap gap-3 pt-2">
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-primary to-fuchsia-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-primary to-fuchsia-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 cursor-pointer"
               >
                 <PackagePlus className="size-4" />
                 Create Product
@@ -414,7 +437,7 @@ export default function CreateProductPage() {
 
               <button
                 type="button"
-                className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 cursor-pointer"
               >
                 Cancel
               </button>
