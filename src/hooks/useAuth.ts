@@ -1,6 +1,5 @@
 'use client';
 
-import { axiosInstance } from '@/lib/axios';
 import { useEffect, useState } from 'react';
 
 type User = {
@@ -16,18 +15,22 @@ export const useAuth = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await axiosInstance.get('/users/me');
+      const res = await fetch('/api/auth/me', {
+        method: 'GET',
+        cache: 'no-store',
+        credentials: 'include',
+      });
 
-      const result = await res.data;
+      const result = await res.json();
 
-      if (result.success) {
+      if (res.ok && result.success) {
         setUser(result.data);
       } else {
         setUser(null);
       }
-    } catch (err) {
+    } catch (error) {
       setUser(null);
-      console.log(err);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -35,14 +38,18 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      const res = await axiosInstance.post('users/logout');
-      const result = await res.data;
+      const res = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+
+      const result = await res.json();
 
       if (result.success) {
         setUser(null);
+        window.location.href = '/login';
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 

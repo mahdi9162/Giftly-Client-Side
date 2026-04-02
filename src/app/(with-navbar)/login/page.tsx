@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { axiosInstance } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { authAxios } from '@/lib/api/authAxios';
 
 type LoginFormData = {
   email: string;
@@ -25,22 +26,25 @@ const LoginPage = () => {
   } = useForm<LoginFormData>();
 
   const loginFormSubmit = async (data: LoginFormData) => {
-    const { email, password } = data;
-
     const userInfo = {
-      email,
-      password,
+      email: data.email,
+      password: data.password,
     };
 
     try {
-      await axiosInstance.post('/users/login', userInfo);
-      router.push('/');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response?.data);
-      } else {
-        console.log(`An unexpected error occurred`, error);
+      const res = await authAxios.post('/api/auth/login', userInfo);
+
+      const result = res.data;
+
+      if (!result.success) {
+        throw new Error(result.message || 'Login failed');
       }
+
+      router.push('/');
+      router.refresh();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
 

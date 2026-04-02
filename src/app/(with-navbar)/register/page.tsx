@@ -9,6 +9,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { axiosInstance } from '@/lib/axios';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { authAxios } from '@/lib/api/authAxios';
 
 type RegisterFormData = {
   fullName: string;
@@ -35,24 +36,26 @@ const RegisterPage = () => {
   });
 
   const registerFormSubmit = async (data: RegisterFormData) => {
-    const { fullName, email, password } = data;
-
     const userInfo = {
-      name: fullName,
-      email,
-      password,
+      name: data.fullName,
+      email: data.email,
+      password: data.password,
     };
 
     try {
-      await axiosInstance.post('/users/register', userInfo);
+      const res = await authAxios.post('/api/auth/register', userInfo);
+
+      const result = res.data;
+
+      if (!result.success) {
+        throw new Error(result.message || 'Registration failed');
+      }
 
       router.push('/');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response?.data);
-      } else {
-        console.log(`An unexpected error occurred`, error);
-      }
+      router.refresh();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
 
