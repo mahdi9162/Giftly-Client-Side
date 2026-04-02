@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Edit, Eye, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 
 type Product = {
   _id: string;
@@ -93,15 +94,21 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
 
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
+                      <Link
+                        href={`/shop/${product._id}`}
+                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                      >
                         <Eye className="size-4" />
                         View
-                      </button>
+                      </Link>
 
-                      <button className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-sm font-bold text-violet-700 transition hover:bg-violet-100">
+                      <Link
+                        href={`/dashboard/admin/products/${product._id}/edit`}
+                        className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-sm font-bold text-violet-700 transition hover:bg-violet-100"
+                      >
                         <Edit className="size-4" />
                         Edit
-                      </button>
+                      </Link>
 
                       <button className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-bold text-rose-700 transition hover:bg-rose-100">
                         <Trash2 className="size-4" />
@@ -121,7 +128,7 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
         {filteredProducts.map((product, index) => (
           <div
             key={product._id}
-            className="overflow-hidden rounded-[24px] border border-white/70 bg-white/95 p-4 shadow-sm sm:rounded-[28px] sm:p-5"
+            className="overflow-hidden rounded-3xl border border-white/70 bg-white/95 p-4 shadow-sm sm:rounded-[28px] sm:p-5"
           >
             {/* Top row */}
             <div className="flex items-start gap-3">
@@ -178,10 +185,13 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
 
             {/* Actions */}
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
-              <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
+              <Link
+                href={`/shop/${product._id}`}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+              >
                 <Eye className="size-4" />
                 View
-              </button>
+              </Link>
 
               <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2.5 text-sm font-bold text-violet-700 transition hover:bg-violet-100">
                 <Edit className="size-4" />
