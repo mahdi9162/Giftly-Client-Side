@@ -107,7 +107,7 @@ export default function ProductFilters({ categories, selectedCategory, searchTer
             <select
               value={priceSort}
               onChange={(e) => updateQuery('sort', e.target.value)}
-              className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition-all focus:border-rose-300 focus:bg-white"
+              className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition-all focus:border-rose-300 focus:bg-white cursor-pointer"
             >
               <option value="featured">Sort: Featured</option>
               <option value="low-to-high">Price: Low to High</option>
@@ -118,7 +118,7 @@ export default function ProductFilters({ categories, selectedCategory, searchTer
             <select
               value={ratingFilter}
               onChange={(e) => updateQuery('rating', e.target.value)}
-              className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition-all focus:border-rose-300 focus:bg-white"
+              className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition-all focus:border-rose-300 focus:bg-white cursor-pointer"
             >
               <option value="all">Rating: All</option>
               <option value="4-up">4★ & up</option>

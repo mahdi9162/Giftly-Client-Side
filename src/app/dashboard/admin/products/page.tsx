@@ -50,7 +50,7 @@ export default function AdminProductsPage() {
           query.set('status', statusFilter);
         }
 
-        const res = await axiosInstance.get(`/products?${query.toString()}`);
+        const res = await axiosInstance.get(`/admin/products?${query.toString()}`);
         setProducts(res.data.data);
         setMeta(res.data.meta);
       } catch (err) {
@@ -87,7 +87,7 @@ export default function AdminProductsPage() {
   const getStatusHref = (status: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    params.set('page', '1'); // status change হলে page reset
+    params.set('page', '1');
     if (status === 'All') {
       params.delete('status');
     } else {
