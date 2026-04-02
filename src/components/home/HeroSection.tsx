@@ -1,6 +1,7 @@
 import React from 'react';
 import Container from '../shared/Container';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const HeroSection = () => {
   return (
@@ -24,10 +25,15 @@ const HeroSection = () => {
             </p>
 
             <div className="mt-8 flex flex-col justify-center lg:justify-start gap-3 sm:flex-row">
-              <button className="btn btn-primary rounded-xl px-6 text-white shadow-md">Browse Gifts</button>
-              <button className="btn rounded-xl border border-slate-300 bg-white px-6 text-slate-700 shadow-sm hover:bg-slate-50">
+              <Link href={'/shop'} className="btn btn-primary rounded-xl px-6 text-white shadow-md">
+                Browse Gifts
+              </Link>
+              <Link
+                href={'/ai-gift-finder'}
+                className="btn rounded-xl border border-slate-300 bg-white px-6 text-slate-700 shadow-sm hover:bg-slate-50"
+              >
                 Get AI Suggestions
-              </button>
+              </Link>
             </div>
 
             <div className="mt-8 space-y-3 text-sm text-slate-600 md:text-base">
