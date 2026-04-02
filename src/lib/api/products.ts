@@ -9,7 +9,7 @@ export async function getProducts(searchParams: { category?: string; search?: st
 
   params.set('limit', '9');
 
-  const res = await fetch(`${process.env.API_BASE_URL}/products?${params.toString()}`, { next: { revalidate: 300 } });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products?${params.toString()}`, { next: { revalidate: 300 } });
 
   if (!res.ok) throw new Error('Failed');
 

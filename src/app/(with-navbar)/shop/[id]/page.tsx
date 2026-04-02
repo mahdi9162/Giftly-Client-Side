@@ -8,7 +8,7 @@ type ProductDetailsPageProps = {
 
 const getProduct = async (id: string): Promise<Product | null> => {
   try {
-    const baseUrl = process.env.API_BASE_URL;
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     if (!baseUrl) {
       console.error('API_BASE_URL is missing');

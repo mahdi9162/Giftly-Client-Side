@@ -37,9 +37,9 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-4 z-50 px-3 md:px-0">
+    <nav className="px-3 md:px-0">
       <Container>
-        <div className="navbar rounded-[28px] border border-white/20 bg-white/5 px-5 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur-lg">
+        <div className="navbar relative z-50 rounded-[28px] border border-white/20 bg-white/5 px-5 shadow-[0_8px_30px_rgba(15,23,42,0.08)] backdrop-blur-lg">
           <div className="navbar-start">
             <div className="dropdown">
               <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -47,7 +47,7 @@ const Navbar = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
                 </svg>
               </div>
-              <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+              <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow">
                 {
                   <>
                     {nav}
@@ -96,7 +96,7 @@ const Navbar = () => {
 
                 <ul
                   tabIndex={0}
-                  className="menu dropdown-content z-100 mt-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg"
+                  className="menu dropdown-content z-50 mt-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg"
                 >
                   <li className="pointer-events-none border-b border-slate-100 px-4 py-2">
                     <p className="text-sm font-semibold text-slate-800">{user?.name}</p>
