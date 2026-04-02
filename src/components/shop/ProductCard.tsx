@@ -78,7 +78,7 @@ export default function ProductCard({ product, categoryLabel }: ProductCardProps
             className={`h-11 w-full rounded-2xl text-sm font-semibold text-white transition-all ${
               product.stock === 0
                 ? 'cursor-not-allowed bg-slate-300'
-                : 'bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600'
+                : 'bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 cursor-pointer'
             }`}
           >
             {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
