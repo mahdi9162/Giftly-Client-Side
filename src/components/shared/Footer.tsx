@@ -11,10 +11,10 @@ const quickLinks = [
 ];
 
 const supportLinks = [
-  { label: 'FAQ', href: '/contact' },
-  { label: 'Refund Policy', href: '/contact' },
-  { label: 'Shipping Info', href: '/contact' },
-  { label: 'Privacy Policy', href: '/contact' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Refund Policy', href: '/refund-Policy' },
+  { label: 'Shipping Info', href: '/shipping-Info' },
+  { label: 'Privacy Policy', href: '/privacy-Policy' },
 ];
 
 const socials = [
