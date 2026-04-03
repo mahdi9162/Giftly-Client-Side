@@ -1,34 +1,30 @@
 'use client';
 
 import React from 'react';
-import { User, Mail, Phone, MapPin, ShieldCheck, Camera, KeyRound, UploadCloud } from 'lucide-react';
+import { User, Mail, Phone, MapPin, ShieldCheck, Camera, UploadCloud, BadgeCheck } from 'lucide-react';
 
-const page = () => {
+const ProfilePage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
       <section className="rounded-[28px] border border-white/60 bg-white/70 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="mb-2 inline-flex rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-500">
-              Account Settings
-            </p>
-            <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">My Profile</h1>
-            <p className="mt-2 text-sm text-slate-500 md:text-base">
-              Manage your personal information, contact details, and account preferences.
-            </p>
-          </div>
+        <div className="flex flex-col gap-3">
+          <p className="inline-flex w-fit rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-500">
+            Account
+          </p>
+          <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">My Profile</h1>
+          <p className="text-sm text-slate-500 md:text-base">Manage your personal information and account details.</p>
         </div>
       </section>
 
       {/* Profile Layout */}
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[0.9fr_1.3fr]">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[0.85fr_1.15fr]">
         {/* Left Profile Card */}
         <div className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
           <div className="flex flex-col items-center text-center">
             <div className="relative">
               <div className="flex h-28 w-28 items-center justify-center rounded-full bg-linear-to-r from-rose-500 to-fuchsia-500 text-3xl font-bold text-white shadow-lg shadow-rose-200/50">
-                K
+                M
               </div>
 
               <button className="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border border-white bg-white text-rose-500 shadow-md transition hover:bg-rose-50">
@@ -36,11 +32,12 @@ const page = () => {
               </button>
             </div>
 
-            <h2 className="mt-4 text-xl font-semibold text-slate-900">Kawser Miah</h2>
-            <p className="mt-1 text-sm text-slate-500">Admin & Store Manager</p>
+            <h2 className="mt-4 text-xl font-semibold text-slate-900">Mahdi Hasan</h2>
+            <p className="mt-1 text-sm text-slate-500">Giftly Account</p>
+
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-2 mt-2 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]"
+              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]"
             >
               <UploadCloud className="h-4 w-4" />
               Upload Image
@@ -48,7 +45,7 @@ const page = () => {
 
             <div className="mt-5 w-full rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-left">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Account Status</p>
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">Active</span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600">
                   <ShieldCheck className="h-3.5 w-3.5" />
@@ -60,12 +57,12 @@ const page = () => {
             <div className="mt-5 grid w-full grid-cols-2 gap-3">
               <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Orders</p>
-                <h3 className="mt-2 text-xl font-bold text-slate-900">124</h3>
+                <h3 className="mt-2 text-xl font-bold text-slate-900">12</h3>
               </div>
 
               <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Role</p>
-                <h3 className="mt-2 text-xl font-bold text-slate-900">Admin</h3>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Member Since</p>
+                <h3 className="mt-2 text-xl font-bold text-slate-900">2026</h3>
               </div>
             </div>
           </div>
@@ -86,7 +83,7 @@ const page = () => {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Kawser Miah"
+                  defaultValue="Mahdi Hasan"
                   className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
                 />
               </div>
@@ -98,7 +95,7 @@ const page = () => {
                 </label>
                 <input
                   type="email"
-                  defaultValue="kawser@example.com"
+                  defaultValue="mahdi@example.com"
                   className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
                 />
               </div>
@@ -127,47 +124,24 @@ const page = () => {
                 />
               </div>
             </div>
-            <div className="flex flex-col md:flex-row md:justify-end">
-              <button className="rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 mt-5 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]">
+
+            <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50">
+                  <BadgeCheck className="h-5 w-5 text-rose-500" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-900">Profile Completion</h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Your account profile is almost complete. Keep your contact info updated for better order tracking.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-col md:flex-row md:justify-end">
+              <button className="rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]">
                 Save Changes
-              </button>
-            </div>
-          </div>
-
-          {/* Security Settings */}
-          <div className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
-            <h2 className="text-lg font-semibold text-slate-900">Security Settings</h2>
-            <p className="mt-1 text-sm text-slate-500">Manage password and account protection.</p>
-
-            <div className="mt-6 grid grid-cols-1 gap-5">
-              <div>
-                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <KeyRound className="h-4 w-4 text-rose-500" />
-                  Current Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter current password"
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <KeyRound className="h-4 w-4 text-rose-500" />
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter new password"
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
-                />
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-col md:flexro md:justify-end">
-              <button className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-500 transition hover:bg-rose-100">
-                Update Password
               </button>
             </div>
           </div>
@@ -177,4 +151,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ProfilePage;

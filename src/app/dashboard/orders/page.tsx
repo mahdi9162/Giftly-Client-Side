@@ -38,7 +38,7 @@ const orders = [
   },
 ];
 
-const page = () => {
+const UserOrders = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   return (
@@ -330,4 +330,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default UserOrders;
