@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, Eye } from 'lucide-react';
+import { Search, Eye, Trash2, UserX, UserCheck } from 'lucide-react';
 
 const users = [
   {
@@ -49,7 +49,7 @@ const page = () => {
               User Management
             </p>
             <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">Customers</h1>
-            <p className="mt-2 text-sm text-slate-500 md:text-base">Manage your users, monitor activity, and control access.</p>
+            <p className="mt-2 text-sm text-slate-500 md:text-base">Manage your users, monitor account status, and control access.</p>
           </div>
 
           <button className="rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]">
@@ -99,71 +99,143 @@ const page = () => {
 
       {/* Desktop Table */}
       <section className="hidden lg:block rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl">
-        <table className="w-full border-separate border-spacing-y-3">
-          <thead>
-            <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
-              <th>User</th>
-              <th>Email</th>
-              <th>Joined</th>
-              <th>Orders</th>
-              <th>Status</th>
-              <th className="text-right">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="bg-slate-50/80">
-                <td className="px-4 py-4 font-semibold">{user.name}</td>
-                <td className="px-4 py-4 text-slate-500">{user.email}</td>
-                <td className="px-4 py-4">{user.joined}</td>
-                <td className="px-4 py-4">{user.orders}</td>
-
-                <td className="px-4 py-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      user.status === 'Active'
-                        ? 'bg-emerald-50 text-emerald-600'
-                        : user.status === 'Inactive'
-                          ? 'bg-slate-100 text-slate-600'
-                          : 'bg-rose-50 text-rose-500'
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-
-                <td className="px-4 py-4 text-right">
-                  <button className="text-rose-500 hover:underline flex items-center gap-1 justify-end">
-                    <Eye size={16} />
-                    View
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[980px] border-separate border-spacing-y-3">
+            <thead>
+              <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
+                <th className="pb-2">User</th>
+                <th className="pb-2">Email</th>
+                <th className="pb-2">Joined</th>
+                <th className="pb-2">Orders</th>
+                <th className="pb-2">Status</th>
+                <th className="pb-2 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id} className="bg-slate-50/80">
+                  <td className="rounded-l-2xl px-4 py-4">
+                    <div>
+                      <p className="font-semibold text-slate-800">{user.name}</p>
+                      <p className="mt-1 text-xs text-slate-400">{user.id}</p>
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-4 text-slate-500">{user.email}</td>
+
+                  <td className="px-4 py-4 text-slate-600">{user.joined}</td>
+
+                  <td className="px-4 py-4 text-slate-700">{user.orders}</td>
+
+                  <td className="px-4 py-4">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                        user.status === 'Active'
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : user.status === 'Inactive'
+                            ? 'bg-slate-100 text-slate-600'
+                            : 'bg-rose-50 text-rose-500'
+                      }`}
+                    >
+                      {user.status}
+                    </span>
+                  </td>
+
+                  <td className="rounded-r-2xl px-4 py-4">
+                    <div className="flex justify-end gap-2">
+                      <button className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500">
+                        <Eye className="h-4 w-4" />
+                        View
+                      </button>
+
+                      {user.status === 'Active' ? (
+                        <button className="inline-flex items-center gap-1 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-600 transition hover:bg-amber-100">
+                          <UserX className="h-4 w-4" />
+                          Deactivate
+                        </button>
+                      ) : (
+                        <button className="inline-flex items-center gap-1 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-600 transition hover:bg-emerald-100">
+                          <UserCheck className="h-4 w-4" />
+                          Activate
+                        </button>
+                      )}
+
+                      <button className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-500 transition hover:bg-rose-100">
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
-      {/* Mobile Cards */}
+      {/* Mobile / Tablet Cards */}
       <section className="grid gap-4 lg:hidden">
         {users.map((user) => (
-          <div key={user.id} className="rounded-2xl bg-white p-4 shadow">
-            <div className="flex justify-between">
+          <div
+            key={user.id}
+            className="rounded-[24px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
+          >
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-semibold">{user.name}</p>
-                <p className="text-sm text-slate-500">{user.email}</p>
+                <p className="font-semibold text-slate-800">{user.name}</p>
+                <p className="mt-1 text-sm text-slate-500">{user.email}</p>
+                <p className="mt-1 text-xs text-slate-400">{user.id}</p>
               </div>
 
-              <span className="text-xs bg-rose-50 text-rose-500 px-3 py-1 rounded-full">{user.status}</span>
+              <span
+                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                  user.status === 'Active'
+                    ? 'bg-emerald-50 text-emerald-600'
+                    : user.status === 'Inactive'
+                      ? 'bg-slate-100 text-slate-600'
+                      : 'bg-rose-50 text-rose-500'
+                }`}
+              >
+                {user.status}
+              </span>
             </div>
 
-            <div className="mt-3 text-sm text-slate-500">Orders: {user.orders}</div>
+            <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50/80 p-3">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Joined</p>
+                <p className="mt-1 text-sm text-slate-600">{user.joined}</p>
+              </div>
 
-            <button className="mt-3 text-rose-500 flex items-center gap-1">
-              <Eye size={14} />
-              View
-            </button>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Orders</p>
+                <p className="mt-1 text-sm font-medium text-slate-700">{user.orders}</p>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500">
+                <Eye className="h-4 w-4" />
+                View
+              </button>
+
+              {user.status === 'Active' ? (
+                <button className="inline-flex items-center gap-1 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-600 transition hover:bg-amber-100">
+                  <UserX className="h-4 w-4" />
+                  Deactivate
+                </button>
+              ) : (
+                <button className="inline-flex items-center gap-1 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-600 transition hover:bg-emerald-100">
+                  <UserCheck className="h-4 w-4" />
+                  Activate
+                </button>
+              )}
+
+              <button className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-500 transition hover:bg-rose-100">
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </section>
