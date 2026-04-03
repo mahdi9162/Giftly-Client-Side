@@ -1,11 +1,263 @@
+'use client';
+
 import React from 'react';
+import { Search, Eye } from 'lucide-react';
+
+const orders = [
+  {
+    id: '#GF-1024',
+    customer: 'Ava Johnson',
+    date: 'Apr 2, 2026',
+    amount: '$84.00',
+    status: 'Delivered',
+    payment: 'Paid',
+  },
+  {
+    id: '#GF-1025',
+    customer: 'Liam Smith',
+    date: 'Apr 2, 2026',
+    amount: '$42.00',
+    status: 'Processing',
+    payment: 'Paid',
+  },
+  {
+    id: '#GF-1026',
+    customer: 'Sophia Lee',
+    date: 'Apr 1, 2026',
+    amount: '$129.00',
+    status: 'Pending',
+    payment: 'Unpaid',
+  },
+  {
+    id: '#GF-1027',
+    customer: 'Noah Brown',
+    date: 'Apr 1, 2026',
+    amount: '$58.00',
+    status: 'Delivered',
+    payment: 'Paid',
+  },
+  {
+    id: '#GF-1028',
+    customer: 'Emma Wilson',
+    date: 'Mar 31, 2026',
+    amount: '$96.00',
+    status: 'Cancelled',
+    payment: 'Refunded',
+  },
+];
 
 const page = () => {
-    return (
-        <div>
-            All orders
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <section className="rounded-[28px] border border-white/60 bg-white/70 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="mb-2 inline-flex rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-500">
+              Orders Management
+            </p>
+            <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">All Orders</h1>
+            <p className="mt-2 text-sm text-slate-500 md:text-base">Manage, review, and track all customer orders from one place.</p>
+          </div>
+
+          <button className="rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]">
+            Export Orders
+          </button>
         </div>
-    );
+      </section>
+
+      {/* Search + Filters */}
+      <section className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
+        <div className="flex flex-col gap-4">
+          {/* Search row */}
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative w-full lg:max-w-sm">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by order ID, customer..."
+                className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              />
+            </div>
+          </div>
+
+          {/* Select filters */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+              <option>Status: All</option>
+              <option>Delivered</option>
+              <option>Processing</option>
+              <option>Pending</option>
+              <option>Cancelled</option>
+            </select>
+
+            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+              <option>Payment: All</option>
+              <option>Paid</option>
+              <option>Unpaid</option>
+              <option>Refunded</option>
+            </select>
+
+            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+              <option>Date: Latest</option>
+              <option>Oldest First</option>
+              <option>Today</option>
+              <option>Last 7 Days</option>
+              <option>This Month</option>
+            </select>
+
+            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+              <option>Amount: Any</option>
+              <option>Under $50</option>
+              <option>$50 - $100</option>
+              <option>$100 - $200</option>
+              <option>Above $200</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      {/* Desktop Table */}
+      <section className="hidden rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl lg:block">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-215 border-separate border-spacing-y-3">
+            <thead>
+              <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
+                <th className="pb-2 font-semibold">Order ID</th>
+                <th className="pb-2 font-semibold">Customer</th>
+                <th className="pb-2 font-semibold">Date</th>
+                <th className="pb-2 font-semibold">Amount</th>
+                <th className="pb-2 font-semibold">Payment</th>
+                <th className="pb-2 font-semibold">Status</th>
+                <th className="pb-2 text-right font-semibold">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.id} className="bg-slate-50/80">
+                  <td className="rounded-l-2xl px-4 py-4 text-sm font-semibold text-slate-800">{order.id}</td>
+
+                  <td className="px-4 py-4 text-sm text-slate-600">{order.customer}</td>
+
+                  <td className="px-4 py-4 text-sm text-slate-500">{order.date}</td>
+
+                  <td className="px-4 py-4 text-sm font-medium text-slate-700">{order.amount}</td>
+
+                  <td className="px-4 py-4">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                        order.payment === 'Paid'
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : order.payment === 'Unpaid'
+                            ? 'bg-amber-50 text-amber-600'
+                            : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {order.payment}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-4">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                        order.status === 'Delivered'
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : order.status === 'Processing'
+                            ? 'bg-violet-50 text-violet-600'
+                            : order.status === 'Pending'
+                              ? 'bg-amber-50 text-amber-600'
+                              : 'bg-rose-50 text-rose-500'
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+
+                  <td className="rounded-r-2xl px-4 py-4 text-right">
+                    <button className="inline-flex items-center gap-1 text-sm font-medium text-rose-500 transition hover:text-rose-600 hover:underline">
+                      <Eye className="h-4 w-4" />
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Mobile / Tablet Cards */}
+      <section className="grid grid-cols-1 gap-4 lg:hidden">
+        {orders.map((order) => (
+          <div
+            key={order.id}
+            className="rounded-3xl border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
+          >
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-slate-800">{order.id}</p>
+                <p className="mt-1 text-sm text-slate-500">{order.customer}</p>
+              </div>
+
+              <button className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-500 transition hover:bg-rose-100">
+                <Eye className="h-3.5 w-3.5" />
+                View
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 rounded-2xl bg-slate-50/80 p-3">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Date</p>
+                <p className="mt-1 text-sm text-slate-600">{order.date}</p>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Amount</p>
+                <p className="mt-1 text-sm font-medium text-slate-700">{order.amount}</p>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Payment</p>
+                <div className="mt-1">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                      order.payment === 'Paid'
+                        ? 'bg-emerald-50 text-emerald-600'
+                        : order.payment === 'Unpaid'
+                          ? 'bg-amber-50 text-amber-600'
+                          : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {order.payment}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Status</p>
+                <div className="mt-1">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                      order.status === 'Delivered'
+                        ? 'bg-emerald-50 text-emerald-600'
+                        : order.status === 'Processing'
+                          ? 'bg-violet-50 text-violet-600'
+                          : order.status === 'Pending'
+                            ? 'bg-amber-50 text-amber-600'
+                            : 'bg-rose-50 text-rose-500'
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+    </div>
+  );
 };
 
 export default page;
