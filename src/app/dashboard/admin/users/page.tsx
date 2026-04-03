@@ -100,7 +100,7 @@ const page = () => {
       {/* Desktop Table */}
       <section className="hidden lg:block rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[980px] border-separate border-spacing-y-3">
+          <table className="w-full min-w-245 border-separate border-spacing-y-3">
             <thead>
               <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                 <th className="pb-2">User</th>
@@ -179,7 +179,7 @@ const page = () => {
         {users.map((user) => (
           <div
             key={user.id}
-            className="rounded-[24px] border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
+            className="rounded-3xl border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
           >
             <div className="flex items-start justify-between gap-3">
               <div>

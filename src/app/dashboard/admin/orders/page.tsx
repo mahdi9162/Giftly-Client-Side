@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Search, Eye } from 'lucide-react';
+import OrderActionCell from '@/components/dashboard/OrderActionCell';
 
 const orders = [
   {
@@ -9,8 +10,8 @@ const orders = [
     customer: 'Ava Johnson',
     date: 'Apr 2, 2026',
     amount: '$84.00',
-    status: 'Delivered',
-    payment: 'Paid',
+    status: 'Pending',
+    payment: 'Unpaid',
   },
   {
     id: '#GF-1025',
@@ -41,8 +42,8 @@ const orders = [
     customer: 'Emma Wilson',
     date: 'Mar 31, 2026',
     amount: '$96.00',
-    status: 'Cancelled',
-    payment: 'Refunded',
+    status: 'Processing',
+    payment: 'Unpaid',
   },
 ];
 
@@ -57,7 +58,9 @@ const page = () => {
               Orders Management
             </p>
             <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">All Orders</h1>
-            <p className="mt-2 text-sm text-slate-500 md:text-base">Manage, review, and track all customer orders from one place.</p>
+            <p className="mt-2 text-sm text-slate-500 md:text-base">
+              Review new orders, confirm them, mark COD as paid, and manage delivery flow.
+            </p>
           </div>
 
           <button className="rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]">
@@ -69,36 +72,34 @@ const page = () => {
       {/* Search + Filters */}
       <section className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
         <div className="flex flex-col gap-4">
-          {/* Search row */}
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search by order ID, customer..."
-                className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
-              />
-            </div>
+          {/* Search */}
+          <div className="relative w-full lg:max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search by customer or order..."
+              className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+            />
           </div>
 
-          {/* Select filters */}
+          {/* Filters */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
               <option>Status: All</option>
-              <option>Delivered</option>
-              <option>Processing</option>
               <option>Pending</option>
+              <option>Processing</option>
+              <option>Delivered</option>
               <option>Cancelled</option>
             </select>
 
-            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
               <option>Payment: All</option>
               <option>Paid</option>
               <option>Unpaid</option>
               <option>Refunded</option>
             </select>
 
-            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
               <option>Date: Latest</option>
               <option>Oldest First</option>
               <option>Today</option>
@@ -106,7 +107,7 @@ const page = () => {
               <option>This Month</option>
             </select>
 
-            <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
+            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
               <option>Amount: Any</option>
               <option>Under $50</option>
               <option>$50 - $100</option>
@@ -120,25 +121,28 @@ const page = () => {
       {/* Desktop Table */}
       <section className="hidden rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl lg:block">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-215 border-separate border-spacing-y-3">
+          <table className="w-full min-w-275 border-separate border-spacing-y-3">
             <thead>
               <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
-                <th className="pb-2 font-semibold">Order ID</th>
                 <th className="pb-2 font-semibold">Customer</th>
                 <th className="pb-2 font-semibold">Date</th>
                 <th className="pb-2 font-semibold">Amount</th>
                 <th className="pb-2 font-semibold">Payment</th>
                 <th className="pb-2 font-semibold">Status</th>
-                <th className="pb-2 text-right font-semibold">Action</th>
+                <th className="pb-2 text-right font-semibold">Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id} className="bg-slate-50/80">
-                  <td className="rounded-l-2xl px-4 py-4 text-sm font-semibold text-slate-800">{order.id}</td>
-
-                  <td className="px-4 py-4 text-sm text-slate-600">{order.customer}</td>
+                  {/* Customer + Order ID */}
+                  <td className="rounded-l-2xl px-4 py-4">
+                    <div>
+                      <p className="font-semibold text-slate-800">{order.customer}</p>
+                      <p className="mt-1 text-xs text-slate-400">{order.id}</p>
+                    </div>
+                  </td>
 
                   <td className="px-4 py-4 text-sm text-slate-500">{order.date}</td>
 
@@ -174,11 +178,11 @@ const page = () => {
                     </span>
                   </td>
 
-                  <td className="rounded-r-2xl px-4 py-4 text-right">
-                    <button className="inline-flex items-center gap-1 text-sm font-medium text-rose-500 transition hover:text-rose-600 hover:underline">
-                      <Eye className="h-4 w-4" />
-                      View
-                    </button>
+                  <td className="rounded-r-2xl px-4 py-4">
+                    <OrderActionCell
+                      initialStatus={order.status as 'Pending' | 'Processing' | 'Delivered'}
+                      initialPaymentStatus={order.payment as 'Unpaid' | 'Paid'}
+                    />
                   </td>
                 </tr>
               ))}
@@ -196,8 +200,8 @@ const page = () => {
           >
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-slate-800">{order.id}</p>
-                <p className="mt-1 text-sm text-slate-500">{order.customer}</p>
+                <p className="font-semibold text-slate-800">{order.customer}</p>
+                <p className="mt-1 text-xs text-slate-400">{order.id}</p>
               </div>
 
               <button className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-500 transition hover:bg-rose-100">
@@ -253,6 +257,11 @@ const page = () => {
                 </div>
               </div>
             </div>
+
+            <OrderActionCell
+              initialStatus={order.status as 'Pending' | 'Processing' | 'Delivered'}
+              initialPaymentStatus={order.payment as 'Unpaid' | 'Paid'}
+            />
           </div>
         ))}
       </section>
