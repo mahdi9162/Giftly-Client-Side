@@ -22,3 +22,5 @@ export type AiResponse = {
   products: Recommendation[];
   message?: string;
 };
+
+export type ResultStatus = 'idle' | 'loading' | 'success' | 'empty' | 'error';
