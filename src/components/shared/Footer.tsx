@@ -12,8 +12,8 @@ const quickLinks = [
 
 const supportLinks = [
   { label: 'FAQ', href: '/faq' },
-  { label: 'Refund Policy', href: '/refund-Policy' },
-  { label: 'Shipping Info', href: '/shipping-Info' },
+  { label: 'Refund Policy', href: '/refund-policy' },
+  { label: 'Shipping Info', href: '/shipping-info' },
   { label: 'Privacy Policy', href: '/privacy-policy' },
 ];
 
