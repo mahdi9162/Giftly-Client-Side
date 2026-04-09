@@ -2,30 +2,27 @@
 
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { Sparkles, Wand2, ArrowRight, Brain, Gift, UserRound, PartyPopper, BadgeDollarSign } from 'lucide-react';
 import Container from '@/components/shared/Container';
-
-type FormData = {
-  person: string;
-  occasion: string;
-  budget: string;
-  interests: string[];
-};
-
-type Recommendation = {
-  id: number;
-  title: string;
-  category: string;
-  price: string;
-  reason: string;
-};
+import { Sparkles, Wand2, ArrowRight, Brain, Gift, UserRound, PartyPopper, BadgeDollarSign } from 'lucide-react';
+import type { FormData, Recommendation, AiResponse } from '@/types/aiFinder';
+import { axiosInstance } from '@/lib/axios';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const interestOptions = ['Tech', 'Gaming', 'Coffee', 'Books', 'Fashion', 'Fitness', 'Travel', 'Music', 'Skincare', 'Home Decor'];
+
+// post api
+const getGiftRecommendations = async (data: FormData): Promise<AiResponse> => {
+  const res = await axiosInstance.post('/ai/recommend', data);
+
+  return res.data;
+};
 
 const AIGiftFinderPage = () => {
   const [showResults, setShowResults] = useState(false);
   const [summary, setSummary] = useState('');
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {
     register,
@@ -65,41 +62,34 @@ const AIGiftFinderPage = () => {
   };
 
   const onSubmit = async (data: FormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    try {
+      setErrorMessage('');
+      setShowResults(false);
 
-    const interestsText = data.interests.length > 0 ? ` focused on ${data.interests.join(', ')}` : '';
+      const result = await getGiftRecommendations({
+        person: data.person,
+        occasion: data.occasion,
+        budget: data.budget.replace(/\s+/g, ''),
+        interests: data.interests,
+      });
 
-    setSummary(
-      `These suggestions are based on a ${data.occasion.toLowerCase()} gift for ${
-        data.person
-      } within a ${data.budget} budget${interestsText}.`,
-    );
+      if (!result.success) {
+        setSummary('');
+        setRecommendations([]);
+        setErrorMessage(result.message || 'Failed to get gift suggestions.');
+        return;
+      }
 
-    setRecommendations([
-      {
-        id: 1,
-        title: 'Personalized Memory Box',
-        category: 'Thoughtful Pick',
-        price: '$34',
-        reason: 'A personal and emotional gift direction that fits many special occasions.',
-      },
-      {
-        id: 2,
-        title: 'Curated Premium Gift Set',
-        category: 'Balanced Choice',
-        price: '$42',
-        reason: 'Looks premium, feels practical, and works well within a flexible budget range.',
-      },
-      {
-        id: 3,
-        title: 'Custom Keepsake Frame',
-        category: 'Sentimental Gift',
-        price: '$28',
-        reason: 'Good option for a meaningful gift without making the budget feel heavy.',
-      },
-    ]);
-
-    setShowResults(true);
+      setSummary(result.explanation);
+      setRecommendations(result.products);
+      setShowResults(true);
+    } catch (error) {
+      console.error('AI Gift Finder Error:', error);
+      setSummary('');
+      setRecommendations([]);
+      setErrorMessage('Something went wrong while getting AI suggestions.');
+      setShowResults(false);
+    }
   };
 
   return (
@@ -217,10 +207,10 @@ const AIGiftFinderPage = () => {
                     <option value="" disabled>
                       Select a budget
                     </option>
-                    <option value="under $25">Under $25</option>
-                    <option value="$25 - $50">$25 - $50</option>
-                    <option value="$50 - $100">$50 - $100</option>
-                    <option value="$100+">$100+</option>
+                    <option value="$0-$25">Under $25</option>
+                    <option value="$25-$50">$25 - $50</option>
+                    <option value="$50-$100">$50 - $100</option>
+                    <option value="$100-$9999">$100+</option>
                   </select>
                   {errors.budget && <p className="mt-2 text-sm font-medium text-rose-500">{errors.budget.message}</p>}
                 </div>
@@ -260,6 +250,7 @@ const AIGiftFinderPage = () => {
                 >
                   {isSubmitting ? 'Generating...' : 'Find Smart Gift Ideas'}
                 </button>
+                {errorMessage && <p className="mt-2 text-xs font-medium text-rose-500">{errorMessage}</p>}
               </form>
             </div>
 
@@ -321,27 +312,40 @@ const AIGiftFinderPage = () => {
                   <div className="mt-6 space-y-4">
                     {recommendations.map((item) => (
                       <div
-                        key={item.id}
+                        key={item._id}
                         className="rounded-[28px] border border-slate-100 bg-linear-to-br from-white to-rose-50/40 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                       >
                         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                          <div>
-                            <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-                              {item.category}
+                          <div className="flex gap-4">
+                            <Image
+                              src={item.image}
+                              height={96}
+                              width={96}
+                              alt={item.alt}
+                              className="h-24 w-24 rounded-2xl border border-slate-200 object-cover"
+                            />
+
+                            <div>
+                              <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+                                {item.label}
+                              </div>
+
+                              <h3 className="mt-3 text-xl font-black text-slate-900">{item.name}</h3>
+
+                              <p className="mt-2 text-sm leading-7 text-slate-600">{item.aiReason}</p>
                             </div>
-
-                            <h3 className="mt-3 text-xl font-black text-slate-900">{item.title}</h3>
-
-                            <p className="mt-2 text-sm leading-7 text-slate-600">{item.reason}</p>
                           </div>
 
                           <div className="flex shrink-0 items-center justify-between gap-4 md:flex-col md:items-end">
-                            <span className="text-lg font-black text-primary">{item.price}</span>
+                            <span className="text-lg font-black text-primary">${item.price}</span>
 
-                            <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 transition hover:border-primary/20 hover:text-primary">
+                            <Link
+                              href={`/shop/${item._id}`}
+                              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-800 transition hover:border-primary/20 hover:text-primary"
+                            >
                               View Suggestion
                               <ArrowRight className="size-4" />
-                            </button>
+                            </Link>
                           </div>
                         </div>
                       </div>

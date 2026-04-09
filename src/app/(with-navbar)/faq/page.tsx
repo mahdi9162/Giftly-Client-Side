@@ -158,10 +158,13 @@ const FaqPage = () => {
                 Send us a message and we&apos;ll get back to you faster than you can wrap a gift!
               </p>
             </div>
-            <button className="relative z-10 group flex items-center gap-3 overflow-hidden rounded-2xl bg-primary px-10 py-4 text-base font-black text-white shadow-xl shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-primary/40 active:scale-95">
-              <span>Get in touch</span>
+            <Link
+              href={'/contact'}
+              className="relative z-10 group flex items-center gap-3 overflow-hidden rounded-2xl bg-primary px-10 py-4 text-base font-black text-white shadow-xl shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-primary/40 active:scale-95"
+            >
+              <span>Contact Support</span>
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
             {/* Background Decorative Blur */}
             <div className="absolute -bottom-10 -right-10 h-40 w-40 bg-accent/10 blur-3xl"></div>
             <div className="absolute -left-10 -top-10 h-40 w-40 bg-secondary/10 blur-3xl"></div>
