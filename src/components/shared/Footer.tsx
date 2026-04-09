@@ -14,7 +14,7 @@ const supportLinks = [
   { label: 'FAQ', href: '/faq' },
   { label: 'Refund Policy', href: '/refund-Policy' },
   { label: 'Shipping Info', href: '/shipping-Info' },
-  { label: 'Privacy Policy', href: '/privacy-Policy' },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
 ];
 
 const socials = [
@@ -27,7 +27,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,1)_0%,rgba(30,27,46,1)_60%,rgba(76,29,54,1)_100%)] text-white">
       <Container>
-        <div className="px-3 py-12 md:px-0 md:py-16">
+        <div className="py-12 md:py-16">
           <div className="grid grid-cols-1 gap-10 text-center md:grid-cols-2 lg:grid-cols-4">
             {/* Brand */}
             <div className="flex flex-col items-center">
