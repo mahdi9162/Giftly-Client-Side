@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import Container from '@/components/shared/Container';
 import { Sparkles, Wand2, ArrowRight, Brain, Gift, UserRound, PartyPopper, BadgeDollarSign } from 'lucide-react';
-import type { FormData, Recommendation, AiResponse } from '@/types/aiFinder';
-import { axiosInstance } from '@/lib/axios';
+import type { FormData, Recommendation } from '@/types/aiFinder';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -14,9 +14,16 @@ const interestOptions = ['Tech', 'Gaming', 'Coffee', 'Books', 'Fashion', 'Fitnes
 type ResultStatus = 'idle' | 'loading' | 'success' | 'empty' | 'error';
 
 // post api
-const getGiftRecommendations = async (data: FormData): Promise<AiResponse> => {
-  const res = await axiosInstance.post('/ai/recommend', data);
-  return res.data;
+const getGiftRecommendations = async (data: FormData) => {
+  const res = await fetch('/api/ai/recommend', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
 };
 
 const AIGiftFinderPage = () => {
