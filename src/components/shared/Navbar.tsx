@@ -9,11 +9,13 @@ import Image from 'next/image';
 import { ShoppingCart } from 'lucide-react';
 import NavLink from '../buttons/NavLink';
 import CartDrawer from '../cart/CartDrawer';
-
+import { useCartStore } from '@/store/useCartStore';
 
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const totalItems = useCartStore((state) => state.getTotalItems());
 
   const nav = (
     <>
@@ -49,13 +51,7 @@ const Navbar = () => {
               {/* Mobile Menu */}
               <div className="dropdown lg:hidden">
                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
                   </svg>
                 </div>
@@ -113,10 +109,13 @@ const Navbar = () => {
             </div>
 
             <div className="navbar-end gap-2 sm:gap-3">
-              <div>
-                <button onClick={() => setIsCartOpen(true)} className="btn btn-secondary btn-square">
+              {/* Cart Button */}
+              <div className="relative">
+                <button onClick={() => setIsCartOpen(true)} className="btn btn-primary btn-square">
                   <ShoppingCart />
                 </button>
+
+                {totalItems > 0 && <div className="badge badge-secondary badge-sm absolute -top-2 -right-2">{totalItems}</div>}
               </div>
 
               {loading ? (
@@ -126,19 +125,9 @@ const Navbar = () => {
                   {/* Desktop Avatar Only */}
                   <div className="hidden lg:block">
                     <div className="dropdown dropdown-end">
-                      <div
-                        tabIndex={0}
-                        role="button"
-                        className="avatar avatar-online cursor-pointer transition hover:scale-105"
-                      >
+                      <div tabIndex={0} role="button" className="avatar avatar-online cursor-pointer transition hover:scale-105">
                         <div className="w-10 md:w-12 rounded-full">
-                          <Image
-                            src="/assets/images/avatar.svg"
-                            alt="User Avatar"
-                            width={48}
-                            height={48}
-                            className="object-cover"
-                          />
+                          <Image src="/assets/images/avatar.svg" alt="User Avatar" width={48} height={48} className="object-cover" />
                         </div>
                       </div>
 

@@ -1,5 +1,9 @@
+'use client';
+
 import React from 'react';
 import { ShoppingBag, X } from 'lucide-react';
+import { useCartStore } from '@/store/useCartStore';
+import CartItems from './CartItems';
 
 type CartDrawerProps = {
   isOpen: boolean;
@@ -7,10 +11,13 @@ type CartDrawerProps = {
 };
 
 const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
+  const items = useCartStore((state) => state.items);
+  const subtotal = useCartStore((state) => state.getSubtotal());
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[999]">
+    <div className="fixed inset-0 z-999">
       <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-[2px] transition-opacity duration-300" onClick={onClose} />
 
       <div className="fixed right-0 top-0 h-screen w-full max-w-md border-l border-rose-100/70 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.16)] transition-transform duration-300">
@@ -52,16 +59,18 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
                 </span>
               </div>
             </div>
-
-            <div className="p-4 sm:p-5">Cart content here</div>
+            {/* Cart content */}
+            <div className="p-4 sm:p-5">
+              <CartItems items={items} />
+            </div>
           </div>
 
-          {/* Footer placeholder look */}
+          {/* Footer placeholder */}
           <div className="border-t border-rose-100/80 bg-white px-4 py-4 sm:px-5">
             <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-slate-600">Subtotal</span>
-                <span className="font-semibold text-slate-900">$0.00</span>
+                <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
               </div>
               <p className="mt-1 text-xs text-slate-500">Shipping and taxes calculated at checkout</p>
             </div>

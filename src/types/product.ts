@@ -3,7 +3,7 @@ export type ProductCategory = 'birthday' | 'anniversary' | 'for-him' | 'for-her'
 export type ProductBadge = 'Best Seller' | 'New';
 export type ProductStatus = 'Active' | 'Draft' | 'Out of Stock';
 
-export interface Product {
+export interface IProduct {
   _id: string;
   name: string;
   category: ProductCategory;
@@ -19,3 +19,17 @@ export interface Product {
   featured?: boolean;
   featuredOrder?: number;
 }
+
+export type TProduct = {
+  _id: string;
+  name: string;
+  category: ProductCategory;
+  description: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  badge?: ProductBadge;
+  image: string;
+  alt: string;
+  stock: number;
+};

@@ -1,32 +1,22 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
-
-type Category = 'birthday' | 'anniversary' | 'for-him' | 'for-her' | 'family' | 'personalized';
-
-type Product = {
-  _id: string;
-  name: string;
-  category: Category;
-  description: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  badge?: 'Best Seller' | 'New';
-  image: string;
-  alt: string;
-  stock: number;
-};
+import { TProduct } from '@/types/product';
+import { useCartStore } from '@/store/useCartStore';
 
 type ProductCardProps = {
-  product: Product;
+  product: TProduct;
   categoryLabel?: string;
 };
 
-export default function ProductCard({ product, categoryLabel }: ProductCardProps) {
+const ProductCard = ({ product, categoryLabel }: ProductCardProps) => {
   const stockText = product.stock === 0 ? 'Out of stock' : product.stock <= 5 ? `Only ${product.stock} left` : 'In stock';
 
   const stockTextColor = product.stock === 0 ? 'text-red-500' : product.stock <= 5 ? 'text-orange-500' : 'text-emerald-600';
+
+  const addToCart = useCartStore((state) => state.addToCart);
 
   return (
     <article className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
@@ -73,6 +63,14 @@ export default function ProductCard({ product, categoryLabel }: ProductCardProps
 
         <div className="mt-5 space-y-3">
           <button
+            onClick={() =>
+              addToCart({
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+              })
+            }
             type="button"
             disabled={product.stock === 0}
             className={`h-11 w-full rounded-2xl text-sm font-semibold text-white transition-all ${
@@ -94,4 +92,6 @@ export default function ProductCard({ product, categoryLabel }: ProductCardProps
       </div>
     </article>
   );
-}
+};
+
+export default ProductCard;
