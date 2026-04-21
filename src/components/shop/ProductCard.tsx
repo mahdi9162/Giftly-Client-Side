@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { TProduct } from '@/types/product';
 import { useCartStore } from '@/store/useCartStore';
+import { useState } from 'react';
 
 type ProductCardProps = {
   product: TProduct;
@@ -12,11 +13,27 @@ type ProductCardProps = {
 };
 
 const ProductCard = ({ product, categoryLabel }: ProductCardProps) => {
+  const [added, setAdded] = useState(false);
+  const addToCart = useCartStore((state) => state.addToCart);
+
   const stockText = product.stock === 0 ? 'Out of stock' : product.stock <= 5 ? `Only ${product.stock} left` : 'In stock';
 
   const stockTextColor = product.stock === 0 ? 'text-red-500' : product.stock <= 5 ? 'text-orange-500' : 'text-emerald-600';
 
-  const addToCart = useCartStore((state) => state.addToCart);
+  const handleAddToCart = () => {
+    addToCart({
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+
+    setAdded(true);
+
+    setTimeout(() => {
+      setAdded(false);
+    }, 2000);
+  };
 
   return (
     <article className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
@@ -63,23 +80,16 @@ const ProductCard = ({ product, categoryLabel }: ProductCardProps) => {
 
         <div className="mt-5 space-y-3">
           <button
-            onClick={() =>
-              addToCart({
-                _id: product._id,
-                name: product.name,
-                price: product.price,
-                image: product.image,
-              })
-            }
+            onClick={handleAddToCart}
             type="button"
             disabled={product.stock === 0}
             className={`h-11 w-full rounded-2xl text-sm font-semibold text-white transition-all ${
               product.stock === 0
                 ? 'cursor-not-allowed bg-slate-300'
-                : 'bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 cursor-pointer'
+                : `${added ? 'bg-linear-to-r from-rose-400 to-fuchsia-500 shadow-md shadow-rose-200/50 cursor-pointer transition-all duration-500 ease-in-out' : 'bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 cursor-pointer'}`
             }`}
           >
-            {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+            {product.stock === 0 ? 'Out of Stock' : added ? 'Added' : 'Add to Cart'}
           </button>
 
           <Link

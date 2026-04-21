@@ -1,13 +1,17 @@
+'use client';
+
 import Link from 'next/link';
-import type { Product } from '@/types/product';
 import Image from 'next/image';
 import Container from '../shared/Container';
+import { IProduct } from '@/types/product';
+import { useCartStore } from '@/store/useCartStore';
+import { useState } from 'react';
 
 type ProductDetailsViewProps = {
-  product: Product;
+  product: IProduct;
 };
 
-const categoryLabels: Record<Product['category'], string> = {
+const categoryLabels: Record<IProduct['category'], string> = {
   birthday: 'Birthday',
   anniversary: 'Anniversary',
   'for-him': 'For Him',
@@ -16,10 +20,28 @@ const categoryLabels: Record<Product['category'], string> = {
   personalized: 'Personalized',
 };
 
-export default function ProductDetailsView({ product }: ProductDetailsViewProps) {
+const ProductDetailsView = ({ product }: ProductDetailsViewProps) => {
+  const addToCart = useCartStore((state) => state.addToCart);
+  const [added, setAdded] = useState(false);
+
   const isActive = product.status === 'Active';
   const isOutOfStock = product.status === 'Out of Stock';
   const inStock = product.stock > 0 && isActive && !isOutOfStock;
+
+  const handleAddToBag = () => {
+    addToCart({
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+
+    setAdded(true);
+
+    setTimeout(() => {
+      setAdded(false);
+    }, 2000);
+  };
 
   return (
     <section className="min-h-screen bg-[#fcfcfd] py-8 md:py-16">
@@ -107,11 +129,25 @@ export default function ProductDetailsView({ product }: ProductDetailsViewProps)
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-4 pt-4 sm:flex-row">
                   <button
+                    onClick={handleAddToBag}
                     disabled={!inStock}
-                    className="group relative flex-1 overflow-hidden rounded-2xl bg-primary px-8 py-3 md:py-5 text-xs md:text-sm font-bold uppercase tracking-widest text-white transition-all hover:shadow-[0_20px_40px_-10px_rgba(236,72,153,0.4)] disabled:bg-slate-200 disabled:shadow-none duration-700 cursor-pointer"
+                    className={`group relative flex-1 overflow-hidden rounded-2xl px-8 py-3 md:py-5 text-xs md:text-sm font-bold uppercase tracking-widest text-white cursor-pointer transition-all duration-500 ease-out ${
+                      !inStock
+                        ? 'bg-base-300 text-slate-400 cursor-not-allowed shadow-none'
+                        : added
+                          ? 'bg-linear-to-r from-fuchsia-600 to-violet-600 scale-[1.01] shadow-[0_20px_40px_-10px_rgba(139,92,246,0.35)]'
+                          : 'bg-primary hover:shadow-[0_20px_40px_-10px_rgba(236,72,153,0.4)]'
+                    }`}
                   >
-                    <span className="relative z-10">{inStock ? 'Add to Shopping Bag' : 'Out of Stock'}</span>
-                    <div className="absolute inset-0 z-0 bg-linear-to-r from-primary to-[#ff6eb4] opacity-0 transition-opacity group-hover:opacity-100" />
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      {!inStock ? 'Out of Stock' : added ? 'Added' : 'Add to Shopping Bag'}
+                    </span>
+                    {inStock && !added && (
+                      <div className="absolute inset-0 z-0 bg-linear-to-r from-primary to-[#ff6eb4] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    )}
+
+                    {/* subtle glow for added state */}
+                    {added && <div className="absolute inset-0 z-0 animate-pulse bg-white/10" />}
                   </button>
 
                   <button
@@ -159,4 +195,6 @@ export default function ProductDetailsView({ product }: ProductDetailsViewProps)
       </Container>
     </section>
   );
-}
+};
+
+export default ProductDetailsView;
