@@ -4,6 +4,8 @@ import React from 'react';
 import { ShoppingBag, X } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import CartItems from './CartItems';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 type CartDrawerProps = {
   isOpen: boolean;
@@ -13,8 +15,14 @@ type CartDrawerProps = {
 const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
   const items = useCartStore((state) => state.items);
   const subtotal = useCartStore((state) => state.getSubtotal());
+  const router = useRouter();
 
   if (!isOpen) return null;
+
+  const handleCheckout = () => {
+    onClose();
+    router.push('/checkout');
+  };
 
   return (
     <div className="fixed inset-0 z-999">
@@ -56,8 +64,8 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
             <div className="border-b border-dashed border-base-300 px-4 py-3 sm:px-5">
               <div className="flex items-center justify-between rounded-2xl border border-base-300 bg-rose-50/50 px-3 py-2.5">
                 <span className="text-xs font-medium text-slate-600 sm:text-sm">Ready for checkout</span>
-                <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-primary shadow-sm sm:text-xs">
-                  Giftly
+                <span className=" px-2.5 py-1 text-[11px] font-semibold">
+                  <Image src={'/favicon.ico'} className="w-8 h-8" alt="Logo" height={32} width={12} />
                 </span>
               </div>
             </div>
@@ -89,7 +97,9 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
                 Continue Shopping
               </button>
 
-              <button className="btn btn-primary text-white">Checkout</button>
+              <button onClick={handleCheckout} className="btn btn-primary text-white">
+                Checkout
+              </button>
             </div>
 
             <p className="mt-3 text-center text-[11px] text-slate-400">Secure checkout powered by Giftly</p>

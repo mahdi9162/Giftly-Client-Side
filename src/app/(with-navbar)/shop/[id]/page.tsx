@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
 import ProductDetailsView from '@/components/shop/ProductDetailsView';
-import type { Product } from '@/types/product';
+import type { IProduct } from '@/types/product';
 
 type ProductDetailsPageProps = {
   params: Promise<{ id: string }>;
 };
 
-const getProduct = async (id: string): Promise<Product | null> => {
+const getProduct = async (id: string): Promise<IProduct | null> => {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 

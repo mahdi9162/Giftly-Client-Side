@@ -31,7 +31,7 @@ const CartItems = ({ items }: CartItemProps) => {
       {items.map((item) => (
         <div key={item._id} className="rounded-3xl border border-base-300 bg-base-100 p-4 shadow-sm transition hover:shadow-md">
           <div className="flex gap-4">
-            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-base-200">
+            <div className="relative h-10 md:h-24 w-10 md:w-24 shrink-0 overflow-hidden rounded-2xl bg-base-200">
               <Image src={item.image} alt={item.name} fill className="object-cover" sizes="96px" />
             </div>
 
@@ -73,7 +73,7 @@ const CartItems = ({ items }: CartItemProps) => {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-xs text-slate-500">Total</p>
+                  <p className="text-xs text-center md:text-left text-slate-500">Total</p>
                   <p className="text-sm font-bold text-accent">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               </div>

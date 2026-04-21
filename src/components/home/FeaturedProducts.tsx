@@ -5,17 +5,17 @@ import { Star } from 'lucide-react';
 import Container from '../shared/Container';
 import { useEffect, useState } from 'react';
 import { axiosInstance } from '@/lib/axios';
-import { Product } from '@/types/product';
+import { IProduct } from '@/types/product';
 
 const FeaturedProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axiosInstance.get('/products');
 
-        setProducts(res.data.data as Product[]);
+        setProducts(res.data.data as IProduct[]);
       } catch (error) {
         console.log(error);
       }
