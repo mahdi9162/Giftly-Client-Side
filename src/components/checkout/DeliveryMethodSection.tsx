@@ -1,7 +1,13 @@
+import { CheckoutFormData } from '@/schemas/checkout.schema';
 import { Truck } from 'lucide-react';
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 const DeliveryMethodSection = () => {
+  const { register, watch } = useFormContext<CheckoutFormData>();
+
+  const selectedDeliveryMethod = watch('deliveryMethod');
+
   return (
     <section className="min-w-0 rounded-3xl border border-orange-100 bg-orange-50/30 p-5 shadow-sm md:p-6">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -20,9 +26,15 @@ const DeliveryMethodSection = () => {
       </div>
 
       <div className="space-y-4">
-        <label className="flex cursor-pointer flex-col gap-4 rounded-3xl border border-primary bg-rose-50/60 px-4 py-4 transition-all sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-5">
+        <label
+          className={`flex cursor-pointer flex-col gap-4 rounded-3xl border px-4 py-4 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-5 ${
+            selectedDeliveryMethod === 'standard'
+              ? 'border-primary bg-rose-50/60 shadow-sm'
+              : 'border-base-300 bg-white hover:border-primary'
+          }`}
+        >
           <div className="flex min-w-0 items-start gap-4">
-            <input type="radio" name="delivery" defaultChecked className="radio radio-primary mt-1 shrink-0" />
+            <input type="radio" {...register('deliveryMethod')} value="standard" className="radio radio-primary mt-1 shrink-0" />
 
             <div className="min-w-0">
               <p className="font-semibold text-base-content">Standard Delivery</p>
@@ -33,9 +45,15 @@ const DeliveryMethodSection = () => {
           <span className="self-start font-bold text-primary sm:self-auto">Free</span>
         </label>
 
-        <label className="flex cursor-pointer flex-col gap-4 rounded-3xl border border-base-300 bg-white px-4 py-4 transition-all hover:border-secondary sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-5">
+        <label
+          className={`flex cursor-pointer flex-col gap-4 rounded-3xl border px-4 py-4 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-5 ${
+            selectedDeliveryMethod === 'express'
+              ? 'border-secondary bg-orange-50/60 shadow-sm'
+              : 'border-base-300 bg-white hover:border-secondary'
+          }`}
+        >
           <div className="flex min-w-0 items-start gap-4">
-            <input type="radio" name="delivery" className="radio radio-warning mt-1 shrink-0" />
+            <input type="radio" {...register('deliveryMethod')} value="express" className="radio radio-warning mt-1 shrink-0" />
 
             <div className="min-w-0">
               <p className="font-semibold text-base-content">Express Delivery</p>

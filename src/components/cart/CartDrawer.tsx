@@ -20,6 +20,10 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
   if (!isOpen) return null;
 
   const handleCheckout = () => {
+    if (items.length === 0) {
+      alert('Cart is empty');
+      return;
+    }
     onClose();
     router.push('/checkout');
   };
