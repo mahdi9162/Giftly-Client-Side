@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
+import { axiosInstance } from '@/lib/axios';
 
 type Product = {
   _id: string;
@@ -26,9 +28,52 @@ type ProductListProps = {
   filteredProducts: Product[];
   totalProducts: number;
   meta: Meta;
+  onProductDeleted: () => void;
 };
 
-const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps) => {
+const ProductList = ({ filteredProducts, totalProducts, meta, onProductDeleted }: ProductListProps) => {
+  // delete button
+  const handleDeleteButton = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Delete this product?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await axiosInstance.delete(`/admin/products/${id}`);
+
+      if (res.status === 200) {
+        onProductDeleted();
+
+        await Swal.fire({
+          title: 'Deleted!',
+          text: 'Product has been deleted successfully.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        onProductDeleted();
+      }
+    } catch (error) {
+      console.log(error);
+
+      await Swal.fire({
+        title: 'Delete failed',
+        text: 'Something went wrong while deleting the product.',
+        icon: 'error',
+        confirmButtonColor: '#ec4899',
+      });
+    }
+  };
+
   return (
     <>
       {/* Desktop table */}
@@ -110,7 +155,10 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
                         Edit
                       </Link>
 
-                      <button className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-bold text-rose-700 transition hover:bg-rose-100">
+                      <button
+                        onClick={() => handleDeleteButton(product._id)}
+                        className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-bold text-rose-700 transition hover:bg-rose-100 cursor-pointer"
+                      >
                         <Trash2 className="size-4" />
                         Delete
                       </button>
@@ -186,7 +234,7 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
             {/* Actions */}
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
               <Link
-                href={`/shop/${product._id}`}
+                href={`/dashboard/admin/products/${product._id}/preview`}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
               >
                 <Eye className="size-4" />
@@ -198,7 +246,10 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
                 Edit
               </button>
 
-              <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-bold text-rose-700 transition hover:bg-rose-100">
+              <button
+                onClick={() => handleDeleteButton(product._id)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-bold text-rose-700 transition hover:bg-rose-100 cursor-pointer"
+              >
                 <Trash2 className="size-4" />
                 Delete
               </button>

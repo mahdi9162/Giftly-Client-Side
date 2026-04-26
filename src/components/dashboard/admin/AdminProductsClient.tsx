@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Package2, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
-import ProductList from '@/components/dashboard/admin/ProductList';
-import { axiosInstance } from '@/lib/axios';
-import PaginationAdmin from '@/components/dashboard/admin/PaginationAdmin';
 import { useSearchParams } from 'next/navigation';
+import ProductList from '@/components/dashboard/admin/ProductList';
+import PaginationAdmin from '@/components/dashboard/admin/PaginationAdmin';
+import { axiosInstance } from '@/lib/axios';
 
 type Product = {
   _id: string;
@@ -18,64 +19,63 @@ type Product = {
   image: string;
 };
 
-export default function AdminProductsClient() {
-  const [products, setProducts] = useState<Product[]>([]);
+const fetchAdminProducts = async (currentPage: number, statusFilter: string) => {
+  const query = new URLSearchParams();
+
+  query.set('page', String(currentPage));
+  query.set('limit', '9');
+
+  if (statusFilter !== 'All') {
+    query.set('status', statusFilter);
+  }
+
+  const res = await axiosInstance.get(`/admin/products?${query.toString()}`);
+
+  return res.data;
+};
+
+const AdminProductsClient = () => {
   const [search, setSearch] = useState('');
-
-  const [meta, setMeta] = useState({
-    totalProducts: 0,
-    totalPages: 0,
-    currentPage: 1,
-    perPage: 9,
-    activeProducts: 0,
-    draftProducts: 0,
-    outOfStockProducts: 0,
-  });
-
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+
   const currentPage = Number(searchParams.get('page')) || 1;
   const statusFilter = searchParams.get('status') || 'All';
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const query = new URLSearchParams();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['admin-products', currentPage, statusFilter],
+    queryFn: () => fetchAdminProducts(currentPage, statusFilter),
+  });
 
-        query.set('page', String(currentPage));
-        query.set('limit', '9');
+  const products: Product[] = useMemo(() => {
+    return data?.data ?? [];
+  }, [data]);
 
-        if (statusFilter !== 'All') {
-          query.set('status', statusFilter);
-        }
-
-        const res = await axiosInstance.get(`/admin/products?${query.toString()}`);
-        setProducts(res.data.data);
-        setMeta(res.data.meta);
-      } catch (err) {
-        console.log(err);
+  const meta = useMemo(() => {
+    return (
+      data?.meta || {
+        totalProducts: 0,
+        totalPages: 0,
+        currentPage: 1,
+        perPage: 9,
+        activeProducts: 0,
+        draftProducts: 0,
+        outOfStockProducts: 0,
       }
-    };
-
-    fetchProducts();
-  }, [currentPage, statusFilter]);
+    );
+  }, [data]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.category.toLowerCase().includes(search.toLowerCase()) ||
-        product._id.toLowerCase().includes(search.toLowerCase());
+      const keyword = search.toLowerCase();
 
-      const matchesStatus = statusFilter === 'All' ? true : product.status === statusFilter;
-
-      return matchesSearch && matchesStatus;
+      return (
+        product.name.toLowerCase().includes(keyword) ||
+        product.category.toLowerCase().includes(keyword) ||
+        product._id.toLowerCase().includes(keyword)
+      );
     });
-  }, [search, statusFilter, products]);
-
-  const totalProducts = meta.totalProducts;
-  const activeProducts = meta.activeProducts;
-  const draftProducts = meta.draftProducts;
-  const outOfStockProducts = meta.outOfStockProducts;
+  }, [search, products]);
 
   const getPageHref = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -87,6 +87,7 @@ export default function AdminProductsClient() {
     const params = new URLSearchParams(searchParams.toString());
 
     params.set('page', '1');
+
     if (status === 'All') {
       params.delete('status');
     } else {
@@ -95,6 +96,20 @@ export default function AdminProductsClient() {
 
     return `?${params.toString()}`;
   };
+
+  const handleProductDeleted = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['admin-products'],
+    });
+  };
+
+  if (isLoading) {
+    return <p className="p-6 font-semibold">Loading products...</p>;
+  }
+
+  if (isError) {
+    return <p className="p-6 font-semibold text-red-500">Failed to load products.</p>;
+  }
 
   return (
     <section className="space-y-6">
@@ -126,37 +141,20 @@ export default function AdminProductsClient() {
       </section>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[28px] border border-rose-200/70 bg-linear-to-br from-rose-100 to-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Total Products</p>
-            <Package2 className="size-5 text-slate-400" />
+        {[
+          ['Total Products', meta.totalProducts, 'from-rose-100'],
+          ['Active Products', meta.activeProducts, 'from-orange-100'],
+          ['Draft Items', meta.draftProducts, 'from-violet-100'],
+          ['Out of Stock', meta.outOfStockProducts, 'from-slate-100'],
+        ].map(([label, value, color]) => (
+          <div key={label} className={`rounded-[28px] border border-slate-200/70 bg-linear-to-br ${color} to-white p-5 shadow-sm`}>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-slate-500">{label}</p>
+              <Package2 className="size-5 text-slate-400" />
+            </div>
+            <p className="mt-4 text-3xl font-black tracking-tight text-slate-900">{value}</p>
           </div>
-          <p className="mt-4 text-3xl font-black tracking-tight text-slate-900">{totalProducts}</p>
-        </div>
-
-        <div className="rounded-[28px] border border-orange-200/70 bg-linear-to-br from-orange-100 to-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Active Products</p>
-            <Package2 className="size-5 text-slate-400" />
-          </div>
-          <p className="mt-4 text-3xl font-black tracking-tight text-slate-900">{activeProducts}</p>
-        </div>
-
-        <div className="rounded-[28px] border border-violet-200/70 bg-linear-to-br from-violet-100 to-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Draft Items</p>
-            <Package2 className="size-5 text-slate-400" />
-          </div>
-          <p className="mt-4 text-3xl font-black tracking-tight text-slate-900">{draftProducts}</p>
-        </div>
-
-        <div className="rounded-[28px] border border-slate-200/70 bg-linear-to-br from-slate-100 to-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-500">Out of Stock</p>
-            <Package2 className="size-5 text-slate-400" />
-          </div>
-          <p className="mt-4 text-3xl font-black tracking-tight text-slate-900">{outOfStockProducts}</p>
-        </div>
+        ))}
       </section>
 
       <section className="rounded-[28px] border border-white/60 bg-white/80 p-4 shadow-sm backdrop-blur md:p-5">
@@ -173,18 +171,7 @@ export default function AdminProductsClient() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <Link
-              href={getStatusHref('All')}
-              className={`rounded-2xl px-4 py-2.5 text-sm font-bold transition ${
-                statusFilter === 'All'
-                  ? 'bg-linear-to-r from-primary to-fuchsia-500 text-white shadow-md shadow-primary/20'
-                  : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              All
-            </Link>
-
-            {(['Active', 'Draft', 'Out of Stock'] as const).map((status) => (
+            {['All', 'Active', 'Draft', 'Out of Stock'].map((status) => (
               <Link
                 key={status}
                 href={getStatusHref(status)}
@@ -201,9 +188,16 @@ export default function AdminProductsClient() {
         </div>
       </section>
 
-      <ProductList filteredProducts={filteredProducts} totalProducts={totalProducts} meta={meta} />
+      <ProductList
+        filteredProducts={filteredProducts}
+        totalProducts={meta.totalProducts}
+        meta={meta}
+        onProductDeleted={handleProductDeleted}
+      />
 
       <PaginationAdmin currentPage={meta.currentPage} totalPages={meta.totalPages} getPageHref={getPageHref} />
     </section>
   );
-}
+};
+
+export default AdminProductsClient;
