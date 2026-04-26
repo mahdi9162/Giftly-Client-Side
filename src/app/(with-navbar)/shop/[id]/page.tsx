@@ -16,7 +16,6 @@ const getProduct = async (id: string): Promise<IProduct | null> => {
     }
 
     const url = `${baseUrl}/products/${id}`;
-    console.log('Fetching product from:', url);
 
     const res = await fetch(url, {
       cache: 'no-store',
@@ -41,7 +40,7 @@ const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
 
   const product = await getProduct(id);
 
-  if (!product) return notFound();
+  if (!product) notFound();
 
   return <ProductDetailsView product={product} />;
 };

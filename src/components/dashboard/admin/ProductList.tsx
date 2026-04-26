@@ -95,7 +95,7 @@ const ProductList = ({ filteredProducts, totalProducts, meta }: ProductListProps
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`/shop/${product._id}`}
+                        href={`/dashboard/admin/products/${product._id}/preview`}
                         className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                       >
                         <Eye className="size-4" />

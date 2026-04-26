@@ -117,7 +117,7 @@ const EditProductPage = () => {
       try {
         setIsLoading(true);
 
-        const { data } = await axiosInstance.get(`/products/${productId}`);
+        const { data } = await axiosInstance.get(`/admin/products/${productId}`);
         const product: ProductResponse = data?.data || data;
 
         setExistingImage(product.image);
