@@ -1,9 +1,8 @@
-name: CI
+name: Client CI
 
 on:
   push:
     branches: [main]
-
   pull_request:
     branches: [main]
 
@@ -26,5 +25,5 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Build project
+      - name: Build client
         run: npm run build
