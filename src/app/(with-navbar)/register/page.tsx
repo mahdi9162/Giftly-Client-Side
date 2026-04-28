@@ -6,8 +6,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import { useForm, useWatch } from 'react-hook-form';
-import { axiosInstance } from '@/lib/axios';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { authAxios } from '@/lib/api/authAxios';
 

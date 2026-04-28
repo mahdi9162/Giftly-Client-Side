@@ -150,7 +150,9 @@ const UserOrders = () => {
               <option>Status: All</option>
               <option>Pending</option>
               <option>Processing</option>
+              <option>shipped</option>
               <option>Delivered</option>
+              <option>Cancelled</option>
             </select>
 
             <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
@@ -174,7 +176,9 @@ const UserOrders = () => {
                 <option>Status: All</option>
                 <option>Pending</option>
                 <option>Processing</option>
+                <option>shipped</option>
                 <option>Delivered</option>
+                <option>Cancelled</option>
               </select>
 
               <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">

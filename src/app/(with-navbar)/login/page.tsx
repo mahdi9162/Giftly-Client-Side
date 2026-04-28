@@ -6,9 +6,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import { useForm } from 'react-hook-form';
-import { axiosInstance } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { authAxios } from '@/lib/api/authAxios';
 
 type LoginFormData = {
