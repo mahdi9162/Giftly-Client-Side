@@ -1,53 +1,56 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Search, Eye } from 'lucide-react';
 import OrderActionCell from '@/components/dashboard/OrderActionCell';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/axios';
 
-const orders = [
-  {
-    id: '#GF-1024',
-    customer: 'Ava Johnson',
-    date: 'Apr 2, 2026',
-    amount: '$84.00',
-    status: 'Pending',
-    payment: 'Unpaid',
-  },
-  {
-    id: '#GF-1025',
-    customer: 'Liam Smith',
-    date: 'Apr 2, 2026',
-    amount: '$42.00',
-    status: 'Processing',
-    payment: 'Paid',
-  },
-  {
-    id: '#GF-1026',
-    customer: 'Sophia Lee',
-    date: 'Apr 1, 2026',
-    amount: '$129.00',
-    status: 'Pending',
-    payment: 'Unpaid',
-  },
-  {
-    id: '#GF-1027',
-    customer: 'Noah Brown',
-    date: 'Apr 1, 2026',
-    amount: '$58.00',
-    status: 'Delivered',
-    payment: 'Paid',
-  },
-  {
-    id: '#GF-1028',
-    customer: 'Emma Wilson',
-    date: 'Mar 31, 2026',
-    amount: '$96.00',
-    status: 'Processing',
-    payment: 'Unpaid',
-  },
-];
+type AdminOrder = {
+  _id: string;
+  customerInfo: {
+    fullName: string;
+    email: string;
+    phone: string;
+  };
+  createdAt: string;
+  total: number;
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+};
 
-const page = () => {
+const AdminOrderPage = () => {
+  const [search, setSearch] = useState('');
+  const [orderStatus, setOrderStatus] = useState('all');
+  const [paymentStatus, setPaymentStatus] = useState('all');
+  const [date, setDate] = useState('latest');
+  const [amount, setAmount] = useState('any');
+
+  const queryString: Record<string, string> = {};
+
+  if (search !== '') {
+    queryString.search = search;
+  }
+  if (orderStatus !== 'all') {
+    queryString.orderStatus = orderStatus;
+  }
+  if (paymentStatus !== 'all') {
+    queryString.paymentStatus = paymentStatus;
+  }
+  if (date !== 'latest') {
+    queryString.date = date;
+  }
+  if (amount !== 'any') {
+    queryString.amount = amount;
+  }
+
+  const { data } = useQuery({
+    queryKey: ['orders', queryString],
+    queryFn: () => axiosInstance.get(`/admin/orders`, { params: queryString }),
+  });
+
+  const orders = data?.data?.data;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -76,6 +79,8 @@ const page = () => {
           <div className="relative w-full lg:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
+              onChange={(e) => setSearch(e.target.value)}
+              value={search}
               type="text"
               placeholder="Search by customer or order..."
               className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
@@ -83,36 +88,50 @@ const page = () => {
           </div>
 
           {/* Filters */}
+          {/* status */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Status: All</option>
-              <option>Pending</option>
-              <option>Processing</option>
-              <option>Delivered</option>
-              <option>Cancelled</option>
+            <select
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              onChange={(e) => setOrderStatus(e.target.value)}
+            >
+              <option value="all">Status: All</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
             </select>
 
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Payment: All</option>
-              <option>Paid</option>
-              <option>Unpaid</option>
-              <option>Refunded</option>
+            <select
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              onChange={(e) => setPaymentStatus(e.target.value)}
+            >
+              <option value="all">Payment: All</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Unpaid</option>
+              <option value="refunded">Refunded</option>
             </select>
 
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Date: Latest</option>
-              <option>Oldest First</option>
-              <option>Today</option>
-              <option>Last 7 Days</option>
-              <option>This Month</option>
+            <select
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              onChange={(e) => setDate(e.target.value)}
+            >
+              <option value="latest">Date: Latest</option>
+              <option value="oldest">Oldest First</option>
+              <option value="today">Today</option>
+              <option value="last-7-days">Last 7 Days</option>
+              <option value="this-month">This Month</option>
             </select>
 
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Amount: Any</option>
-              <option>Under $50</option>
-              <option>$50 - $100</option>
-              <option>$100 - $200</option>
-              <option>Above $200</option>
+            <select
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              onChange={(e) => setAmount(e.target.value)}
+            >
+              <option value="any">Amount: Any</option>
+              <option value="under-50">Under $50</option>
+              <option value="50-100">$50 - $100</option>
+              <option value="100-200">$100 - $200</option>
+              <option value="above-200">Above $200</option>
             </select>
           </div>
         </div>
@@ -134,55 +153,52 @@ const page = () => {
             </thead>
 
             <tbody>
-              {orders.map((order) => (
-                <tr key={order.id} className="bg-slate-50/80">
+              {orders?.map((order: AdminOrder) => (
+                <tr key={order._id} className="bg-slate-50/80">
                   {/* Customer + Order ID */}
                   <td className="rounded-l-2xl px-4 py-4">
                     <div>
-                      <p className="font-semibold text-slate-800">{order.customer}</p>
-                      <p className="mt-1 text-xs text-slate-400">{order.id}</p>
+                      <p className="font-semibold text-slate-800">{order.customerInfo.fullName}</p>
+                      <p className="mt-1 text-xs text-slate-400">{order._id}</p>
                     </div>
                   </td>
 
-                  <td className="px-4 py-4 text-sm text-slate-500">{order.date}</td>
+                  <td className="px-4 py-4 text-sm text-slate-500">{order.createdAt}</td>
 
-                  <td className="px-4 py-4 text-sm font-medium text-slate-700">{order.amount}</td>
+                  <td className="px-4 py-4 text-sm font-medium text-slate-700">{order.total}</td>
 
                   <td className="px-4 py-4">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                        order.payment === 'Paid'
+                        order.paymentStatus === 'paid'
                           ? 'bg-emerald-50 text-emerald-600'
-                          : order.payment === 'Unpaid'
+                          : order.paymentStatus === 'pending'
                             ? 'bg-amber-50 text-amber-600'
                             : 'bg-slate-100 text-slate-600'
                       }`}
                     >
-                      {order.payment}
+                      {order.paymentStatus}
                     </span>
                   </td>
 
                   <td className="px-4 py-4">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                        order.status === 'Delivered'
+                        order.orderStatus === 'delivered'
                           ? 'bg-emerald-50 text-emerald-600'
-                          : order.status === 'Processing'
+                          : order.orderStatus === 'processing'
                             ? 'bg-violet-50 text-violet-600'
-                            : order.status === 'Pending'
+                            : order.orderStatus === 'pending'
                               ? 'bg-amber-50 text-amber-600'
                               : 'bg-rose-50 text-rose-500'
                       }`}
                     >
-                      {order.status}
+                      {order.orderStatus}
                     </span>
                   </td>
 
                   <td className="rounded-r-2xl px-4 py-4">
-                    <OrderActionCell
-                      initialStatus={order.status as 'Pending' | 'Processing' | 'Delivered'}
-                      initialPaymentStatus={order.payment as 'Unpaid' | 'Paid'}
-                    />
+                    <OrderActionCell initialStatus={order.orderStatus} initialPaymentStatus={order.paymentStatus} />
                   </td>
                 </tr>
               ))}
@@ -193,15 +209,15 @@ const page = () => {
 
       {/* Mobile / Tablet Cards */}
       <section className="grid grid-cols-1 gap-4 lg:hidden">
-        {orders.map((order) => (
+        {orders?.map((order: AdminOrder) => (
           <div
-            key={order.id}
+            key={order._id}
             className="rounded-3xl border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
           >
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
-                <p className="font-semibold text-slate-800">{order.customer}</p>
-                <p className="mt-1 text-xs text-slate-400">{order.id}</p>
+                <p className="font-semibold text-slate-800">{order.customerInfo.fullName}</p>
+                <p className="mt-1 text-xs text-slate-400">{order._id}</p>
               </div>
 
               <button className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-500 transition hover:bg-rose-100">
@@ -213,12 +229,12 @@ const page = () => {
             <div className="grid grid-cols-2 gap-3 rounded-2xl bg-slate-50/80 p-3">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Date</p>
-                <p className="mt-1 text-sm text-slate-600">{order.date}</p>
+                <p className="mt-1 text-sm text-slate-600">{order.createdAt}</p>
               </div>
 
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Amount</p>
-                <p className="mt-1 text-sm font-medium text-slate-700">{order.amount}</p>
+                <p className="mt-1 text-sm font-medium text-slate-700">{order.total}</p>
               </div>
 
               <div>
@@ -226,14 +242,14 @@ const page = () => {
                 <div className="mt-1">
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                      order.payment === 'Paid'
+                      order.paymentStatus === 'paid'
                         ? 'bg-emerald-50 text-emerald-600'
-                        : order.payment === 'Unpaid'
+                        : order.paymentStatus === 'pending'
                           ? 'bg-amber-50 text-amber-600'
                           : 'bg-slate-100 text-slate-600'
                     }`}
                   >
-                    {order.payment}
+                    {order.paymentStatus}
                   </span>
                 </div>
               </div>
@@ -243,25 +259,22 @@ const page = () => {
                 <div className="mt-1">
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                      order.status === 'Delivered'
+                      order.orderStatus === 'delivered'
                         ? 'bg-emerald-50 text-emerald-600'
-                        : order.status === 'Processing'
+                        : order.orderStatus === 'processing'
                           ? 'bg-violet-50 text-violet-600'
-                          : order.status === 'Pending'
+                          : order.orderStatus === 'pending'
                             ? 'bg-amber-50 text-amber-600'
                             : 'bg-rose-50 text-rose-500'
                     }`}
                   >
-                    {order.status}
+                    {order.orderStatus}
                   </span>
                 </div>
               </div>
             </div>
 
-            <OrderActionCell
-              initialStatus={order.status as 'Pending' | 'Processing' | 'Delivered'}
-              initialPaymentStatus={order.payment as 'Unpaid' | 'Paid'}
-            />
+            <OrderActionCell initialStatus={order.orderStatus} initialPaymentStatus={order.paymentStatus} />
           </div>
         ))}
       </section>
@@ -269,4 +282,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AdminOrderPage;
