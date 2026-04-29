@@ -198,7 +198,7 @@ const AdminOrderPage = () => {
                   </td>
 
                   <td className="rounded-r-2xl px-4 py-4">
-                    <OrderActionCell initialStatus={order.orderStatus} initialPaymentStatus={order.paymentStatus} />
+                    <OrderActionCell initialStatus={order.orderStatus} initialPaymentStatus={order.paymentStatus} orderId={order._id} />
                   </td>
                 </tr>
               ))}
@@ -274,7 +274,7 @@ const AdminOrderPage = () => {
               </div>
             </div>
 
-            <OrderActionCell initialStatus={order.orderStatus} initialPaymentStatus={order.paymentStatus} />
+            <OrderActionCell initialStatus={order.orderStatus} initialPaymentStatus={order.paymentStatus} orderId={order._id} />
           </div>
         ))}
       </section>
