@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { axiosInstance } from '@/lib/axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, CreditCard, PackageCheck, Truck } from 'lucide-react';
 
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
@@ -9,27 +10,66 @@ type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 type OrderActionCellProps = {
   initialStatus?: OrderStatus;
   initialPaymentStatus?: PaymentStatus;
+  orderId: string;
 };
 
-const OrderActionCell = ({ initialStatus = 'pending', initialPaymentStatus = 'pending' }: OrderActionCellProps) => {
-  const [status, setStatus] = useState<OrderStatus>(initialStatus);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(initialPaymentStatus);
+type Order = {
+  _id: string;
+  orderStatus: OrderStatus;
+  paymentStatus: PaymentStatus;
+};
+
+type OrdersQueryResponse = {
+  data: {
+    data: Order[];
+  };
+};
+
+const OrderActionCell = ({ initialStatus = 'pending', initialPaymentStatus = 'pending', orderId }: OrderActionCellProps) => {
+  const status = initialStatus;
+  const paymentStatus = initialPaymentStatus;
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (newStatus: OrderStatus) => axiosInstance.patch(`/admin/orders/${orderId}`, { orderStatus: newStatus }),
+
+    onSuccess: (res) => {
+      const updatedOrder = res.data.data;
+
+      queryClient.setQueriesData({ queryKey: ['orders'] }, (oldData: OrdersQueryResponse | undefined) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            data: oldData.data.data.map((order: Order) => (order._id === updatedOrder._id ? updatedOrder : order)),
+          },
+        };
+      });
+    },
+  });
+
+  const handleUpdateOrder = (newOrderStatus?: OrderStatus) => {
+    if (newOrderStatus) {
+      mutation.mutate(newOrderStatus);
+    }
+  };
 
   const handleConfirm = () => {
-    setStatus('processing');
+    handleUpdateOrder('processing');
   };
 
   const handleShip = () => {
-    setStatus('shipped');
+    handleUpdateOrder('shipped');
   };
 
   const handleDeliver = () => {
-    setStatus('delivered');
+    handleUpdateOrder('delivered');
   };
 
   const handleCodPaidAndDeliver = () => {
-    setPaymentStatus('paid');
-    setStatus('delivered');
+    handleUpdateOrder('delivered');
   };
 
   return (
