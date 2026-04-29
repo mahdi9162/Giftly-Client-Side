@@ -5,6 +5,8 @@ import { Search, Eye } from 'lucide-react';
 import OrderActionCell from '@/components/dashboard/OrderActionCell';
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/axios';
+import { formattedDateTime } from '@/lib/utils';
+import Pagination from '@/components/shared/Pagination';
 
 type AdminOrder = {
   _id: string;
@@ -25,8 +27,9 @@ const AdminOrderPage = () => {
   const [paymentStatus, setPaymentStatus] = useState('all');
   const [date, setDate] = useState('latest');
   const [amount, setAmount] = useState('any');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const queryString: Record<string, string> = {};
+  const queryString: Record<string, string | number> = {};
 
   if (search !== '') {
     queryString.search = search;
@@ -44,12 +47,16 @@ const AdminOrderPage = () => {
     queryString.amount = amount;
   }
 
+  queryString.page = currentPage;
+  queryString.limit = 9;
+
   const { data } = useQuery({
     queryKey: ['orders', queryString],
     queryFn: () => axiosInstance.get(`/admin/orders`, { params: queryString }),
   });
 
-  const orders = data?.data?.data;
+  const orders = data?.data?.data || [];
+  const totalPages = data?.data.meta.totalPages || 1;
 
   return (
     <div className="space-y-6">
@@ -143,27 +150,30 @@ const AdminOrderPage = () => {
           <table className="w-full min-w-275 border-separate border-spacing-y-3">
             <thead>
               <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
-                <th className="pb-2 font-semibold">Customer</th>
-                <th className="pb-2 font-semibold">Date</th>
-                <th className="pb-2 font-semibold">Amount</th>
-                <th className="pb-2 font-semibold">Payment</th>
-                <th className="pb-2 font-semibold">Status</th>
-                <th className="pb-2 text-right font-semibold">Actions</th>
+                <th className="pb-2 font-semibold pl-2">No</th>
+                <th className="pb-2 font-semibold pl-4">Customer</th>
+                <th className="pb-2 font-semibold pl-4">Date</th>
+                <th className="pb-2 font-semibold pr-2">Amount</th>
+                <th className="pb-2 font-semibold pl-2">Payment</th>
+                <th className="pb-2 font-semibold pl-5">Status</th>
+                <th className="pb-2 text-right font-semibold pr-8">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {orders?.map((order: AdminOrder) => (
+              {orders?.map((order: AdminOrder, index: number) => (
                 <tr key={order._id} className="bg-slate-50/80">
+                  {/* Serial Number Column */}
+                  <td className="px-4 py-4 text-sm text-slate-500">{index + 1}</td>
                   {/* Customer + Order ID */}
-                  <td className="rounded-l-2xl px-4 py-4">
+                  <td className="flex rounded-l-2xl px-4 py-4">
                     <div>
                       <p className="font-semibold text-slate-800">{order.customerInfo.fullName}</p>
                       <p className="mt-1 text-xs text-slate-400">{order._id}</p>
                     </div>
                   </td>
 
-                  <td className="px-4 py-4 text-sm text-slate-500">{order.createdAt}</td>
+                  <td className="px-4 py-4 text-sm text-slate-500">{formattedDateTime(order.createdAt)}</td>
 
                   <td className="px-4 py-4 text-sm font-medium text-slate-700">{order.total}</td>
 
@@ -229,7 +239,7 @@ const AdminOrderPage = () => {
             <div className="grid grid-cols-2 gap-3 rounded-2xl bg-slate-50/80 p-3">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Date</p>
-                <p className="mt-1 text-sm text-slate-600">{order.createdAt}</p>
+                <p className="mt-1 text-xs w-20 md:w-full md:text-sm text-slate-600">{formattedDateTime(order.createdAt)}</p>
               </div>
 
               <div>
@@ -278,6 +288,7 @@ const AdminOrderPage = () => {
           </div>
         ))}
       </section>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 };
