@@ -1,44 +1,50 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Search, Eye, Trash2, UserX, UserCheck } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/axios';
+import { formattedDate } from '@/lib/utils';
+import Pagination from '@/components/shared/Pagination';
 
-const users = [
-  {
-    id: '#U-1021',
-    name: 'Ava Johnson',
-    email: 'ava@gmail.com',
-    joined: 'Apr 2, 2026',
-    orders: 12,
-    status: 'Active',
-  },
-  {
-    id: '#U-1022',
-    name: 'Liam Smith',
-    email: 'liam@gmail.com',
-    joined: 'Apr 1, 2026',
-    orders: 5,
-    status: 'Inactive',
-  },
-  {
-    id: '#U-1023',
-    name: 'Sophia Lee',
-    email: 'sophia@gmail.com',
-    joined: 'Mar 30, 2026',
-    orders: 18,
-    status: 'Active',
-  },
-  {
-    id: '#U-1024',
-    name: 'Noah Brown',
-    email: 'noah@gmail.com',
-    joined: 'Mar 28, 2026',
-    orders: 2,
-    status: 'Blocked',
-  },
-];
+type User = {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+};
 
-const page = () => {
+const AdminUser = () => {
+  const [search, setSearch] = useState('');
+  const [activeStatus, setActiveStatus] = useState('all');
+  const [joined, setJoined] = useState('latest');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const queryString: Record<string, string | number> = {};
+
+  if (search !== '') {
+    queryString.search = search;
+  }
+  if (activeStatus !== 'all') {
+    queryString.status = activeStatus;
+  }
+  if (joined !== 'latest') {
+    queryString.joined = joined;
+  }
+  queryString.page = currentPage;
+  queryString.limit = 9;
+
+  const { data } = useQuery({
+    queryKey: ['users', queryString],
+    queryFn: () => axiosInstance.get('/admin/users', { params: queryString }),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const users = data?.data?.data || [];
+  const totalPages = data?.data?.meta?.totalPages || 1;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -62,36 +68,36 @@ const page = () => {
       <section className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
         <div className="flex flex-col gap-4">
           {/* Search */}
-          <div className="relative w-full lg:max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+          {/* Filters */}
+          <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <Search className="absolute left-4 lg:left-3 top-6 lg:top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
+              onChange={(e) => setSearch(e.target.value)}
+              value={search}
               type="text"
               placeholder="Search users..."
               className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
             />
-          </div>
 
-          {/* Filters */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Status: All</option>
-              <option>Active</option>
-              <option>Inactive</option>
-              <option>Blocked</option>
+            <select
+              onChange={(e) => setActiveStatus(e.target.value)}
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+            >
+              <option value="all">Status: All</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="blocked">Blocked</option>
             </select>
 
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Orders: Any</option>
-              <option>0-5 Orders</option>
-              <option>5-10 Orders</option>
-              <option>10+ Orders</option>
-            </select>
-
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Joined: Latest</option>
-              <option>Oldest First</option>
-              <option>Last 7 Days</option>
-              <option>This Month</option>
+            <select
+              onChange={(e) => setJoined(e.target.value)}
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+            >
+              <option value="latest">Joined: Latest</option>
+              <option value="oldest">Oldest First</option>
+              <option value="last-7-days">Last 7 Days</option>
+              <option value="this-month">This Month</option>
             </select>
           </div>
         </div>
@@ -106,27 +112,24 @@ const page = () => {
                 <th className="pb-2">User</th>
                 <th className="pb-2">Email</th>
                 <th className="pb-2">Joined</th>
-                <th className="pb-2">Orders</th>
                 <th className="pb-2">Status</th>
                 <th className="pb-2 text-right">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="bg-slate-50/80">
+              {users.map((user: User) => (
+                <tr key={user._id} className="bg-slate-50/80">
                   <td className="rounded-l-2xl px-4 py-4">
                     <div>
                       <p className="font-semibold text-slate-800">{user.name}</p>
-                      <p className="mt-1 text-xs text-slate-400">{user.id}</p>
+                      <p className="mt-1 text-xs text-slate-400">{user._id}</p>
                     </div>
                   </td>
 
                   <td className="px-4 py-4 text-slate-500">{user.email}</td>
 
-                  <td className="px-4 py-4 text-slate-600">{user.joined}</td>
-
-                  <td className="px-4 py-4 text-slate-700">{user.orders}</td>
+                  <td className="px-4 py-4 text-slate-600">{formattedDate(user.createdAt)}</td>
 
                   <td className="px-4 py-4">
                     <span
@@ -176,16 +179,16 @@ const page = () => {
 
       {/* Mobile / Tablet Cards */}
       <section className="grid gap-4 lg:hidden">
-        {users.map((user) => (
+        {users.map((user: User) => (
           <div
-            key={user.id}
+            key={user._id}
             className="rounded-3xl border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-semibold text-slate-800">{user.name}</p>
                 <p className="mt-1 text-sm text-slate-500">{user.email}</p>
-                <p className="mt-1 text-xs text-slate-400">{user.id}</p>
+                <p className="mt-1 text-xs text-slate-400">{user._id}</p>
               </div>
 
               <span
@@ -204,12 +207,7 @@ const page = () => {
             <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50/80 p-3">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Joined</p>
-                <p className="mt-1 text-sm text-slate-600">{user.joined}</p>
-              </div>
-
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Orders</p>
-                <p className="mt-1 text-sm font-medium text-slate-700">{user.orders}</p>
+                <p className="mt-1 text-sm text-slate-600">{formattedDate(user.createdAt)}</p>
               </div>
             </div>
 
@@ -239,8 +237,9 @@ const page = () => {
           </div>
         ))}
       </section>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 };
 
-export default page;
+export default AdminUser;
