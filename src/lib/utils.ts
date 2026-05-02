@@ -8,3 +8,11 @@ export const formattedDateTime = (rawData: string) => {
     hour12: true,
   });
 };
+
+export const formattedDate = (rawData: string) => {
+  return new Date(rawData).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
