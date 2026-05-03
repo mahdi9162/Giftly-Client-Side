@@ -7,6 +7,7 @@ import { axiosInstance } from '@/lib/axios';
 import { formattedDate } from '@/lib/utils';
 import Pagination from '@/components/shared/Pagination';
 import { useAuth } from '@/hooks/useAuth';
+import Swal from 'sweetalert2';
 
 type User = {
   _id: string;
@@ -79,6 +80,48 @@ const AdminUser = () => {
 
   const handleUpdateStatus = (id: User['_id'], status: User['status']) => {
     mutation.mutate({ id, newStatus: status });
+  };
+
+  //------------------delete function
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => axiosInstance.delete(`/admin/users/${id}`),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'User has been deleted successfully.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    },
+
+    onError: () => {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to delete user.',
+        icon: 'error',
+      });
+    },
+  });
+
+  const handleDeleteButton = (id: string) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This user will be permanently deleted!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Yes, delete',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutation.mutate(id);
+      }
+    });
   };
 
   return (
@@ -241,7 +284,10 @@ const AdminUser = () => {
                               </button>
                             )}
 
-                            <button className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-500 transition hover:bg-rose-100 cursor-pointer">
+                            <button
+                              onClick={() => handleDeleteButton(user._id)}
+                              className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-500 transition hover:bg-rose-100 cursor-pointer"
+                            >
                               <Trash2 className="h-4 w-4" />
                               Delete
                             </button>
@@ -348,7 +394,10 @@ const AdminUser = () => {
                       </button>
                     )}
 
-                    <button className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-500 transition hover:bg-rose-100 cursor-pointer">
+                    <button
+                      onClick={() => handleDeleteButton(user._id)}
+                      className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-500 transition hover:bg-rose-100 cursor-pointer"
+                    >
                       <Trash2 className="h-4 w-4" />
                       Delete
                     </button>
