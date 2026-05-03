@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Mail, MapPin, Phone, Send, Clock3, MessageSquareMore } from 'lucide-react';
 import Container from '@/components/shared/Container';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 
 type ContactFormData = {
   fullName: string;
@@ -13,6 +14,9 @@ type ContactFormData = {
 };
 
 const ContactPage = () => {
+  const { store } = useStoreSettings();
+  console.log(store);
+
   const {
     register,
     handleSubmit,
@@ -56,7 +60,7 @@ const ContactPage = () => {
                       <Mail className="size-5" />
                     </div>
                     <p className="text-sm font-bold text-slate-900">Email Us</p>
-                    <p className="mt-1 text-sm text-slate-600">support@giftly.com</p>
+                    <p className="mt-1 text-sm text-slate-600">{store?.supportEmail}</p>
                   </div>
 
                   <div className="rounded-3xl border border-white/70 bg-white/80 p-4 shadow-sm backdrop-blur">
@@ -64,7 +68,7 @@ const ContactPage = () => {
                       <Phone className="size-5" />
                     </div>
                     <p className="text-sm font-bold text-slate-900">Call Us</p>
-                    <p className="mt-1 text-sm text-slate-600">+1 (555) 123-4567</p>
+                    <p className="mt-1 text-sm text-slate-600">{store?.phone}</p>
                   </div>
                 </div>
               </div>
@@ -80,11 +84,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <p className="font-bold text-slate-900">Office Address</p>
-                      <p className="mt-1 text-sm leading-6 text-slate-600">
-                        1209 Mountain Road PL NE #7545,
-                        <br />
-                        Albuquerque, NM 87110, USA
-                      </p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{store?.address}</p>
                     </div>
                   </div>
 

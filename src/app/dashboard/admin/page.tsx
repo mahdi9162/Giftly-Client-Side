@@ -176,7 +176,7 @@ const AdminOverviewPage = () => {
           return (
             <div
               key={item.title}
-              className="rounded-[24px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
+              className="rounded-3xl border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div
@@ -240,7 +240,7 @@ const AdminOverviewPage = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_260px]">
-          <div className="h-[280px] rounded-[24px] border border-slate-100 bg-linear-to-b from-white to-rose-50/30 p-3 sm:p-4">
+          <div className="h-70 rounded-3xl border border-slate-100 bg-linear-to-b from-white to-rose-50/30 p-3 sm:p-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
@@ -286,7 +286,7 @@ const AdminOverviewPage = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-[24px] border border-rose-100 bg-linear-to-r from-rose-50 to-fuchsia-50 p-4">
+            <div className="rounded-3xl border border-rose-100 bg-linear-to-r from-rose-50 to-fuchsia-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-400">
                 {range === 'weekly' ? 'This Week' : 'This Month'}
               </p>
@@ -300,7 +300,7 @@ const AdminOverviewPage = () => {
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+            <div className="rounded-3xl border border-slate-100 bg-slate-50/70 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                 Orders Trend
               </p>
@@ -314,7 +314,7 @@ const AdminOverviewPage = () => {
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+            <div className="rounded-3xl border border-slate-100 bg-slate-50/70 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                 Best {range === 'weekly' ? 'Day' : 'Week'}
               </p>
@@ -351,7 +351,7 @@ const AdminOverviewPage = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[620px] border-separate border-spacing-y-3">
+            <table className="w-full min-w-155 border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                   <th className="pb-2 font-semibold">Order ID</th>

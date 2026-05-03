@@ -2,8 +2,11 @@
 
 import React from 'react';
 import { Store, Mail, Phone, MapPin, Coins, UploadCloud } from 'lucide-react';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 
-const page = () => {
+const PageSetting = () => {
+  const { store } = useStoreSettings();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -145,4 +148,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default PageSetting;

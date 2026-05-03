@@ -32,10 +32,12 @@ const Footer = () => {
             {/* Brand */}
             <div className="flex flex-col items-center">
               <Link href="/">
-                <Image src="/assets/logo/logo-dark.svg" alt="Giftly logo" width={120} height={120} className="w-24 h-auto" />
+                <Image src={'/assets/logo/logo-dark.svg'} alt="Giftly logo" width={120} height={120} className="w-30 h-auto" />
               </Link>
 
-              <p className="mt-4 max-w-55 text-sm leading-relaxed text-white/70">Thoughtful gifting, powered by AI.</p>
+              <p className="mt-4 max-w-55 text-sm leading-relaxed text-white/70">
+                Thoughtful gifting, powered by AI. Helping you find the perfect gift — effortlessly, every time.
+              </p>
             </div>
 
             {/* Quick Links */}
@@ -90,6 +92,7 @@ const Footer = () => {
           {/* Bottom */}
           <div className="mt-10 border-t border-white/10 pt-6">
             <p className="text-center text-xs text-white/55">© 2026 Giftly. All rights reserved.</p>
+            <p className="text-center text-sm text-white/55 pt-2">Made with ❤️ for thoughtful gifting</p>
           </div>
         </div>
       </Container>
