@@ -9,6 +9,28 @@ import RecentOrders from '@/components/dashboard/admin/dashboardOverview/RecentO
 import TopProducts from '@/components/dashboard/admin/dashboardOverview/TopProducts';
 import QuickActions from '@/components/dashboard/admin/dashboardOverview/QuickActions';
 import RecentActivity from '@/components/dashboard/admin/dashboardOverview/RecentActivity';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/axios';
+
+type AdminOverviewData = {
+  totalRevenue: number;
+  totalOrders: number;
+  totalProducts: number;
+  totalCustomers: number;
+};
+
+type SalesOverviewData = {
+  range: 'weekly' | 'monthly';
+  totalRevenue: number;
+  totalOrders: number;
+  bestLabel: string;
+  orderTrend: number;
+  chartData: {
+    label: string;
+    revenue: number;
+    orderCount: number;
+  }[];
+};
 
 const stats = [
   {
@@ -122,23 +144,78 @@ const activity = [
 const AdminOverviewPage = () => {
   const [range, setRange] = useState<'weekly' | 'monthly'>('weekly');
 
-  const chartData = range === 'weekly' ? weeklyData : monthlyData;
+  const { data: overviewRes } = useQuery({
+    queryKey: ['admin-overview'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/admin/dashboard/stats');
+      return res.data.data as AdminOverviewData;
+    },
+  });
+
+  const { data: salesOverview } = useQuery({
+    queryKey: ['admin-sales-overview', range],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/admin/dashboard/sales-overview?range=${range}`);
+      return res.data.data as SalesOverviewData;
+    },
+  });
+
+  const dashboardStats = [
+    {
+      title: 'Total Revenue',
+      value: `$${overviewRes?.totalRevenue || 0}`,
+      change: '+12.5%',
+      icon: DollarSign,
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
+    },
+    {
+      title: 'Total Orders',
+      value: `${overviewRes?.totalOrders || 0}`,
+      change: '+8.2%',
+      icon: ShoppingBag,
+      iconBg: 'bg-violet-50',
+      iconColor: 'text-violet-600',
+    },
+    {
+      title: 'Products',
+      value: `${overviewRes?.totalProducts || 0}`,
+      change: '+5.1%',
+      icon: Package,
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-600',
+    },
+    {
+      title: 'Customers',
+      value: `${overviewRes?.totalCustomers || 0}`,
+      change: '+10.3%',
+      icon: Users,
+      iconBg: 'bg-sky-50',
+      iconColor: 'text-sky-600',
+    },
+  ];
+
+  const chartData =
+    salesOverview?.chartData.map((item) => ({
+      name: item.label,
+      revenue: item.revenue,
+    })) || [];
 
   return (
     <div className="space-y-6">
       {/* Page header */}
       <OverviewHeader />
       {/* Stats */}
-      <Stats stats={stats} />
+      <Stats stats={dashboardStats} />
 
       {/* Chart Section */}
-      <ChartSection range={range} setRange={setRange} chartData={chartData} />
+      <ChartSection range={range} setRange={setRange} chartData={chartData} salesOverview={salesOverview} />
 
       {/* Middle grid */}
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_0.9fr]">
         {/* Recent orders */}
         <RecentOrders recentOrders={recentOrders} />
-        
+
         {/* Top products */}
         <TopProducts topProducts={topProducts} />
       </section>
