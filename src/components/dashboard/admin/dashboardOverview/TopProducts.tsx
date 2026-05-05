@@ -2,8 +2,8 @@ import React from 'react';
 
 type TopProductsProps = {
   name: string;
-  sold: number;
-  revenue: string;
+  totalSold: number;
+  totalRevenue: number;
 };
 
 const TopProducts = ({ topProducts }: { topProducts: TopProductsProps[] }) => {
@@ -27,8 +27,8 @@ const TopProducts = ({ topProducts }: { topProducts: TopProductsProps[] }) => {
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-500">Sold: {product.sold}</span>
-              <span className="font-semibold text-slate-800">{product.revenue}</span>
+              <span className="text-slate-500">Sold: {product.totalSold}</span>
+              <span className="font-semibold text-slate-800">{product.totalRevenue}</span>
             </div>
           </div>
         ))}

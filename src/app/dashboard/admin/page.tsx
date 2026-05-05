@@ -42,11 +42,11 @@ type RecentOrder = {
   orderStatus: string;
 };
 
-const topProducts = [
-  { name: 'Personalized Gift Box', sold: 124, revenue: '$2,480' },
-  { name: 'Romantic Flower Bundle', sold: 98, revenue: '$1,860' },
-  { name: 'Birthday Surprise Pack', sold: 86, revenue: '$1,640' },
-];
+type TopProducts = {
+  name: string;
+  totalSold: number;
+  totalRevenue: number;
+};
 
 const activity = [
   {
@@ -151,6 +151,17 @@ const AdminOverviewPage = () => {
     amount: `$${order.total}`,
     status: order.orderStatus,
   }));
+
+  // top products
+  const { data: topProducts = [] } = useQuery({
+    queryKey: ['top-products'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/admin/dashboard/top-products');
+      return res?.data?.data as TopProducts[];
+    },
+  });
+
+  console.log(topProducts);
 
   return (
     <div className="space-y-6">
