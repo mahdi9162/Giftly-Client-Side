@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Package, ShoppingBag, Users, DollarSign, BadgeCheck, AlertCircle } from 'lucide-react';
+import { Package, ShoppingBag, Users, DollarSign } from 'lucide-react';
 import OverviewHeader from '@/components/dashboard/admin/dashboardOverview/OverviewHeader';
 import Stats from '@/components/dashboard/admin/dashboardOverview/Stats';
 import ChartSection from '@/components/dashboard/admin/dashboardOverview/ChartSection';
 import RecentOrders from '@/components/dashboard/admin/dashboardOverview/RecentOrders';
 import TopProducts from '@/components/dashboard/admin/dashboardOverview/TopProducts';
 import QuickActions from '@/components/dashboard/admin/dashboardOverview/QuickActions';
-import RecentActivity from '@/components/dashboard/admin/dashboardOverview/RecentActivity';
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/axios';
+import LowStockProducts from '@/components/dashboard/admin/dashboardOverview/LowStockProducts';
 
 type AdminOverviewData = {
   totalRevenue: number;
@@ -48,29 +48,12 @@ type TopProducts = {
   totalRevenue: number;
 };
 
-const activity = [
-  {
-    title: 'New order placed',
-    desc: 'A new order has been placed by Ava Johnson.',
-    icon: ShoppingBag,
-    color: 'text-violet-600',
-    bg: 'bg-violet-50',
-  },
-  {
-    title: 'Product stock running low',
-    desc: '“Romantic Flower Bundle” stock is getting low.',
-    icon: AlertCircle,
-    color: 'text-amber-600',
-    bg: 'bg-amber-50',
-  },
-  {
-    title: 'Order delivered successfully',
-    desc: 'Order #GF-1021 has been delivered.',
-    icon: BadgeCheck,
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50',
-  },
-];
+type LowStockProducts = {
+  _id: string;
+  name: string;
+  category: string;
+  stock: number;
+};
 
 const AdminOverviewPage = () => {
   const [range, setRange] = useState<'weekly' | 'monthly'>('weekly');
@@ -161,7 +144,14 @@ const AdminOverviewPage = () => {
     },
   });
 
-  console.log(topProducts);
+  // low stock products
+  const { data: lowStockProducts = [] } = useQuery({
+    queryKey: ['low-stock'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/admin/products/low-stock');
+      return res?.data?.data as LowStockProducts[];
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -187,8 +177,8 @@ const AdminOverviewPage = () => {
         {/* Quick actions */}
         <QuickActions />
 
-        {/* Recent activity */}
-        <RecentActivity activity={activity} />
+        {/* Low stock products */}
+        <LowStockProducts lowStockProducts={lowStockProducts} />
       </section>
     </div>
   );

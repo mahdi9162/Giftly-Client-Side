@@ -1,5 +1,6 @@
 import { Clock3 } from 'lucide-react';
 import React from 'react';
+import LiveClock from './LiveClock';
 
 const OverviewHeader = () => {
   return (
@@ -21,8 +22,7 @@ const OverviewHeader = () => {
               <Clock3 className="h-5 w-5 text-rose-500" />
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Today</p>
-              <p className="text-sm font-semibold text-slate-800">4 Apr, 2026</p>
+              <LiveClock />
             </div>
           </div>
         </div>
