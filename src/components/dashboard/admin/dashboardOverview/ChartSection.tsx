@@ -5,9 +5,16 @@ type ChartSectionProps = {
   range: 'weekly' | 'monthly';
   setRange: Dispatch<SetStateAction<'weekly' | 'monthly'>>;
   chartData: { name: string; revenue: number }[];
+  salesOverview?: {
+    range: 'weekly' | 'monthly';
+    totalRevenue: number;
+    totalOrders: number;
+    bestLabel: string;
+    orderTrend: number;
+  };
 };
 
-const ChartSection = ({ range, setRange, chartData }: ChartSectionProps) => {
+const ChartSection = ({ range, setRange, chartData, salesOverview }: ChartSectionProps) => {
   return (
     <>
       <section className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
@@ -71,23 +78,23 @@ const ChartSection = ({ range, setRange, chartData }: ChartSectionProps) => {
           <div className="space-y-4">
             <div className="rounded-3xl border border-rose-100 bg-linear-to-r from-rose-50 to-fuchsia-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-400">
-                {range === 'weekly' ? 'This Week' : 'This Month'}
+                {range === 'weekly' ? 'THIS WEEK' : 'THIS MONTH'}
               </p>
-              <h3 className="mt-2 text-2xl font-bold text-slate-900">{range === 'weekly' ? '$15,250' : '$38,600'}</h3>
+              <h3 className="mt-2 text-2xl font-bold text-slate-900">${salesOverview?.totalRevenue || 0}</h3>
               <p className="mt-1 text-sm text-slate-500">{range === 'weekly' ? 'Total weekly revenue' : 'Total monthly revenue'}</p>
             </div>
 
             <div className="rounded-3xl border border-slate-100 bg-slate-50/70 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Orders Trend</p>
-              <h3 className="mt-2 text-2xl font-bold text-slate-900">{range === 'weekly' ? '1,390' : '5,420'}</h3>
+              <h3 className="mt-2 text-2xl font-bold text-slate-900">{salesOverview?.totalOrders}</h3>
               <p className="mt-1 text-sm text-emerald-600">
-                {range === 'weekly' ? '+8.6% compared to last week' : '+12.4% compared to last month'}
+                {salesOverview?.orderTrend || 0}% compared to last {range === 'weekly' ? 'week' : 'month'}
               </p>
             </div>
 
             <div className="rounded-3xl border border-slate-100 bg-slate-50/70 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Best {range === 'weekly' ? 'Day' : 'Week'}</p>
-              <h3 className="mt-2 text-2xl font-bold text-slate-900">{range === 'weekly' ? 'Friday' : 'Week 4'}</h3>
+              <h3 className="mt-2 text-2xl font-bold text-slate-900">{salesOverview?.bestLabel || 'N/A '}</h3>
               <p className="mt-1 text-sm text-slate-500">
                 {range === 'weekly' ? 'Highest sales recorded this week' : 'Highest sales recorded this month'}
               </p>

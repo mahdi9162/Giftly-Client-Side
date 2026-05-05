@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 type RecentOrdersProps = {
@@ -17,9 +18,12 @@ const RecentOrders = ({ recentOrders }: { recentOrders: RecentOrdersProps[] }) =
             <p className="mt-1 text-sm text-slate-500">Latest order updates from your store</p>
           </div>
 
-          <button className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500">
+          <Link
+            href={'/dashboard/admin/orders'}
+            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500"
+          >
             View all
-          </button>
+          </Link>
         </div>
 
         <div className="overflow-x-auto">
