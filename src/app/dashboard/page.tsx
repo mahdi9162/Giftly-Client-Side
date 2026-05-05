@@ -29,7 +29,7 @@ const Page = () => {
   return (
     <div className="space-y-6">
       {/* Welcome / Hero */}
-      <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-white/80 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-8">
+      <section className="relative overflow-hidden rounded-4xl border border-white/70 bg-white/80 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-8">
         <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-fuchsia-200/25 blur-3xl" />
         <div className="pointer-events-none absolute -left-10 bottom-0 h-32 w-32 rounded-full bg-rose-200/20 blur-3xl" />
 
@@ -163,7 +163,7 @@ const Page = () => {
             <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-500">Weekly</span>
           </div>
 
-          <div className="mt-5 h-[260px] rounded-[24px] border border-slate-100 bg-linear-to-b from-white to-rose-50/30 p-3">
+          <div className="mt-5 h-65 rounded-3xl border border-slate-100 bg-linear-to-b from-white to-rose-50/30 p-3">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={orderTrend}>
                 <defs>

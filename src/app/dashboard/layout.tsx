@@ -6,7 +6,7 @@ import { useState, type ReactNode } from 'react';
 import Logo from '@/components/shared/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { Bell, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react';
-import { adminRoutes, userRoutes } from '@/lib/dashboardNav';
+import { adminRoutes, userRoutes } from '@/lib/dashboardSidebar';
 
 type DashboardLayoutProps = {
   children: ReactNode;
