@@ -1,6 +1,6 @@
 import { Clock3 } from 'lucide-react';
 import React from 'react';
-import LiveClock from './LiveClock';
+import LiveClock from '../../LiveClock';
 
 const OverviewHeader = () => {
   return (
@@ -17,13 +17,8 @@ const OverviewHeader = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 rounded-2xl border border-rose-100 bg-linear-to-r from-rose-50 to-fuchsia-50 px-4 py-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm">
-              <Clock3 className="h-5 w-5 text-rose-500" />
-            </div>
-            <div>
-              <LiveClock />
-            </div>
+          <div className="rounded-2xl border border-rose-100 bg-linear-to-r from-rose-50 to-fuchsia-50 px-4 py-3">
+            <LiveClock />
           </div>
         </div>
       </section>

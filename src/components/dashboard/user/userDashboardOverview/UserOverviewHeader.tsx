@@ -1,7 +1,8 @@
 import { User } from '@/hooks/useAuth';
-import { ArrowRight, Gift, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import LiveClock from '../../LiveClock';
 
 type Props = {
   user: User | null;
@@ -45,29 +46,9 @@ const UserOverviewHeader = ({ user }: Props) => {
           </div>
         </div>
 
-        {/* Mini highlight card */}
-        <div className="w-full xl:max-w-sm">
-          <div className="rounded-[28px] border border-rose-100/80 bg-linear-to-br from-white via-rose-50/70 to-fuchsia-50/70 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
-            <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
-                <Gift className="h-6 w-6 text-rose-500" />
-              </div>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 shadow-sm">This Week</span>
-            </div>
-
-            <h3 className="mt-4 text-lg font-semibold text-slate-900">Personalized gifting made easy</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              Explore curated gift suggestions and keep track of every order from one place.
-            </p>
-
-            <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/70 bg-white/80 p-3">
-              <div className="rounded-xl bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-600">4</div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Delivered Orders</p>
-                <p className="text-xs text-slate-500">Your recent completed purchases</p>
-              </div>
-            </div>
-          </div>
+        {/* clock */}
+        <div className="rounded-2xl border border-rose-100 bg-linear-to-r from-rose-50 to-fuchsia-50 px-4 py-3">
+          <LiveClock />
         </div>
       </div>
     </section>
