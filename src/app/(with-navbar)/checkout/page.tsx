@@ -72,6 +72,8 @@ const Checkout = () => {
         })),
       };
 
+      console.log(payload);
+
       if (data.paymentMethod === 'cod') {
         await axiosInstance.post('/orders', payload);
 
