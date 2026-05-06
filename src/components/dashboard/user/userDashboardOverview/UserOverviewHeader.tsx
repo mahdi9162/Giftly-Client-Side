@@ -31,7 +31,7 @@ const UserOverviewHeader = ({ user }: Props) => {
           <div className="mt-5 flex flex-wrap gap-3">
             <button
               onClick={() => router.push('/shop')}
-              className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.02] cursor-pointer"
             >
               Browse Products
               <ArrowRight className="h-4 w-4" />
@@ -39,7 +39,7 @@ const UserOverviewHeader = ({ user }: Props) => {
 
             <button
               onClick={() => router.push('/dashboard/orders')}
-              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500"
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 cursor-pointer"
             >
               My Orders
             </button>

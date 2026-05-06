@@ -12,10 +12,12 @@ import { CheckoutFormData, checkoutSchema } from '@/schemas/checkout.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCartStore } from '@/store/useCartStore';
 import { axiosInstance } from '@/lib/axios';
+import { useAuth } from '@/hooks/useAuth';
 
 const Checkout = () => {
   const items = useCartStore((state) => state.items);
   const subtotal = useCartStore((state) => state.getSubtotal());
+  const { user, loading } = useAuth();
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -45,6 +47,13 @@ const Checkout = () => {
   const shippingCost = deliveryMethod === 'express' ? 8 : 0;
   const total = subtotal + shippingCost;
 
+  if (loading) return;
+
+  if (!user?._id) {
+    alert('Please login first');
+    return;
+  }
+
   const checkoutFormSubmit = async (data: CheckoutFormData) => {
     try {
       if (items.length === 0) {
@@ -54,6 +63,7 @@ const Checkout = () => {
 
       const payload = {
         customerInfo: {
+          _id: user._id,
           fullName: data.fullName,
           email: data.email,
           phone: data.phone,
@@ -72,10 +82,8 @@ const Checkout = () => {
         })),
       };
 
-      console.log(payload);
-
       if (data.paymentMethod === 'cod') {
-        await axiosInstance.post('/orders', payload);
+        await axiosInstance.post('', payload);
 
         alert('Order placed successfully');
         return;

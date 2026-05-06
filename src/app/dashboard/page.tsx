@@ -10,6 +10,8 @@ import UserChart from '@/components/dashboard/user/userDashboardOverview/UserCha
 import UserRecentOrders from '@/components/dashboard/user/userDashboardOverview/UserRecentOrders';
 import UserQuickActions from '@/components/dashboard/user/userDashboardOverview/UserQuickActions';
 import UserDashboardFooter from '@/components/dashboard/user/userDashboardOverview/UserDashboardFooter';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/axios';
 
 const orderTrend = [
   { name: 'Mon', orders: 1 },
@@ -31,13 +33,21 @@ const Page = () => {
     }
   }, [user, router]);
 
+  const { data: userOrders } = useQuery({
+    queryKey: ['user-orders'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/orders');
+      return res?.data?.data;
+    },
+  });
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <UserOverviewHeader user={user} />
 
       {/* Stats */}
-      <UserStats />
+      <UserStats userOrders={userOrders} />
 
       {/* Chart + Recent orders */}
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_1.35fr]">
