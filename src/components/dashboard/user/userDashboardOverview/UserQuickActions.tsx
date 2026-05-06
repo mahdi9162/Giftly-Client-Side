@@ -8,7 +8,7 @@ const UserQuickActions = () => {
     <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <button
         onClick={() => router.push('/shop')}
-        className="group relative overflow-hidden rounded-[28px] bg-linear-to-r from-rose-500 to-fuchsia-500 p-6 text-left text-white shadow-lg shadow-rose-200/50 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(244,63,94,0.28)]"
+        className="group relative overflow-hidden rounded-[28px] bg-linear-to-r from-rose-500 to-fuchsia-500 p-6 text-left text-white shadow-lg shadow-rose-200/50 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(244,63,94,0.28)] cursor-pointer"
       >
         <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
         <div className="relative">
@@ -22,7 +22,7 @@ const UserQuickActions = () => {
 
       <button
         onClick={() => router.push('/dashboard/orders')}
-        className="group rounded-[28px] border border-slate-200 bg-white p-6 text-left shadow-[0_14px_40px_rgba(15,23,42,0.04)] transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:bg-rose-50/40"
+        className="group rounded-[28px] border border-slate-200 bg-white p-6 text-left shadow-[0_14px_40px_rgba(15,23,42,0.04)] transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:bg-rose-50/40 cursor-pointer"
       >
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 transition duration-300 group-hover:scale-110">
           <Package className="h-6 w-6 text-violet-500" />
@@ -33,7 +33,7 @@ const UserQuickActions = () => {
 
       <button
         onClick={() => router.push('/dashboard/profile')}
-        className="group rounded-[28px] border border-slate-200 bg-white p-6 text-left shadow-[0_14px_40px_rgba(15,23,42,0.04)] transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:bg-rose-50/40"
+        className="group rounded-[28px] border border-slate-200 bg-white p-6 text-left shadow-[0_14px_40px_rgba(15,23,42,0.04)] transition duration-300 hover:-translate-y-1 hover:border-rose-200 hover:bg-rose-50/40 cursor-pointer"
       >
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 transition duration-300 group-hover:scale-110">
           <UserRound className="h-6 w-6 text-sky-500" />

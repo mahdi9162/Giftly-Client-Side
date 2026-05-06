@@ -55,7 +55,7 @@ const Page = () => {
         <UserChart orderTrend={orderTrend} />
 
         {/* Recent orders */}
-        <UserRecentOrders />
+        <UserRecentOrders userOrders={userOrders} />
       </section>
 
       {/* Quick actions */}

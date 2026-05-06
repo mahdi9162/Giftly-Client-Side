@@ -25,7 +25,7 @@ const UserDashboardFooter = ({ user }: Props) => {
 
         <button
           onClick={() => router.push('/dashboard/settings')}
-          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500"
+          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 cursor-pointer"
         >
           <Settings className="h-4 w-4" />
           Open Settings
