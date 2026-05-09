@@ -2,14 +2,22 @@
 
 import { useEffect, useState } from 'react';
 
-type User = {
+export type User = {
   _id: string;
+  profileImage: string;
   name: string;
   email: string;
-  role: string;
+  role: 'admin' | 'moderator' | 'user';
 };
 
-export const useAuth = () => {
+type UseAuthReturn = {
+  user: User | null;
+  loading: boolean;
+  logout: () => Promise<void>;
+  refetchUser: () => Promise<void>;
+};
+
+export const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 

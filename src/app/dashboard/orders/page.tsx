@@ -2,44 +2,78 @@
 
 import React, { useState } from 'react';
 import { Eye, Package, Search, Truck, Clock3, CheckCircle2, ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/axios';
+import { formattedDate } from '@/lib/utils';
+import Pagination from '@/components/shared/Pagination';
 
-const orders = [
-  {
-    id: '#GF-1024',
-    date: 'Apr 2, 2026',
-    items: 2,
-    amount: '$84.00',
-    payment: 'Paid',
-    status: 'Pending',
-  },
-  {
-    id: '#GF-1023',
-    date: 'Apr 1, 2026',
-    items: 1,
-    amount: '$120.00',
-    payment: 'Paid',
-    status: 'Delivered',
-  },
-  {
-    id: '#GF-1022',
-    date: 'Mar 30, 2026',
-    items: 3,
-    amount: '$58.00',
-    payment: 'Unpaid',
-    status: 'Processing',
-  },
-  {
-    id: '#GF-1021',
-    date: 'Mar 28, 2026',
-    items: 1,
-    amount: '$42.00',
-    payment: 'Paid',
-    status: 'Delivered',
-  },
-];
+type UserOrderItem = {
+  _id: string;
+  items: {
+    productId: string;
+    quantity: number;
+    priceAtPurchase: number;
+  }[];
+  total: number;
+  paymentStatus: 'paid' | 'pending' | 'refunded';
+  orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  createdAt: string;
+};
+
+type UserOrdersResponse = {
+  meta: {
+    totalOrders: number;
+    totalPages: number;
+    currentPage: number;
+    perPage: number;
+  };
+  data: UserOrderItem[];
+};
 
 const UserOrders = () => {
   const [showFilters, setShowFilters] = useState(false);
+  const [search, getSearch] = useState('');
+  const [orderStatus, setOrderStatus] = useState('all');
+  const [paymentStatus, setPaymentStatus] = useState('all');
+  const [date, setDate] = useState('latest');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // queary
+  const queryString: Record<string, string | number> = {};
+
+  if (search !== '') {
+    queryString.search = search;
+  }
+
+  if (orderStatus !== 'all') {
+    queryString.orderStatus = orderStatus;
+  }
+  if (paymentStatus !== 'all') {
+    queryString.paymentStatus = paymentStatus;
+  }
+  if (date !== 'latest') {
+    queryString.date = date;
+  }
+
+  queryString.page = currentPage;
+  queryString.limit = 9;
+
+  // fetch data
+  const { data: ordersResponse } = useQuery<UserOrdersResponse>({
+    queryKey: ['order-list', queryString],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/orders/my-orders', { params: queryString });
+      return res?.data as UserOrdersResponse;
+    },
+  });
+
+  const ordersList = ordersResponse?.data || [];
+
+  const delivered = ordersList.filter((order) => order.orderStatus === 'delivered').length;
+  const pending = ordersList.filter((order) => order.orderStatus === 'pending').length;
+  const onTheWay = ordersList.filter((order) => order.orderStatus === 'processing' || order.orderStatus === 'shipped').length;
+
+  const totalPages = ordersResponse?.meta?.totalPages || 1;
 
   return (
     <div className="space-y-6">
@@ -56,10 +90,10 @@ const UserOrders = () => {
 
           <div className="flex flex-wrap gap-3">
             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-              Total Orders: <span className="font-semibold text-slate-900">12</span>
+              Total Orders: <span className="font-semibold text-slate-900">{ordersResponse?.meta?.totalOrders || 0}</span>
             </div>
             <div className="rounded-2xl bg-linear-to-r from-rose-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50">
-              4 Delivered
+              {delivered}
             </div>
           </div>
         </div>
@@ -74,7 +108,7 @@ const UserOrders = () => {
             </div>
             <span className="text-xs text-slate-400">Total</span>
           </div>
-          <h3 className="mt-4 text-2xl font-bold text-slate-900">12</h3>
+          <h3 className="mt-4 text-2xl font-bold text-slate-900">{ordersResponse?.meta?.totalOrders || 0}</h3>
           <p className="text-sm text-slate-500">Orders placed</p>
         </div>
 
@@ -85,7 +119,7 @@ const UserOrders = () => {
             </div>
             <span className="text-xs text-slate-400">Pending</span>
           </div>
-          <h3 className="mt-4 text-2xl font-bold text-slate-900">3</h3>
+          <h3 className="mt-4 text-2xl font-bold text-slate-900">{pending}</h3>
           <p className="text-sm text-slate-500">Waiting for update</p>
         </div>
 
@@ -96,7 +130,7 @@ const UserOrders = () => {
             </div>
             <span className="text-xs text-slate-400">Processing</span>
           </div>
-          <h3 className="mt-4 text-2xl font-bold text-slate-900">5</h3>
+          <h3 className="mt-4 text-2xl font-bold text-slate-900">{onTheWay}</h3>
           <p className="text-sm text-slate-500">On the way</p>
         </div>
 
@@ -107,7 +141,7 @@ const UserOrders = () => {
             </div>
             <span className="text-xs text-slate-400">Delivered</span>
           </div>
-          <h3 className="mt-4 text-2xl font-bold text-slate-900">4</h3>
+          <h3 className="mt-4 text-2xl font-bold text-slate-900">{delivered}</h3>
           <p className="text-sm text-slate-500">Completed orders</p>
         </div>
       </section>
@@ -139,6 +173,11 @@ const UserOrders = () => {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
+              onChange={(e) => {
+                getSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              value={search}
               placeholder="Search your orders..."
               className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
             />
@@ -146,52 +185,94 @@ const UserOrders = () => {
 
           {/* Desktop filters */}
           <div className="hidden grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 lg:grid">
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Status: All</option>
-              <option>Pending</option>
-              <option>Processing</option>
-              <option>shipped</option>
-              <option>Delivered</option>
-              <option>Cancelled</option>
+            <select
+              onChange={(e) => {
+                setOrderStatus(e.target.value);
+                setCurrentPage(1);
+              }}
+              value={orderStatus}
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+            >
+              <option value={'all'}>Status: All</option>
+              <option value={'pending'}>Pending</option>
+              <option value={'processing'}>Processing</option>
+              <option value={'shipped'}>shipped</option>
+              <option value={'delivered'}>Delivered</option>
+              <option value={'cancelled'}>Cancelled</option>
             </select>
 
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Payment: All</option>
-              <option>Paid</option>
-              <option>Unpaid</option>
+            <select
+              onChange={(e) => {
+                setPaymentStatus(e.target.value);
+                setCurrentPage(1);
+              }}
+              value={paymentStatus}
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+            >
+              <option value={'all'}>Payment: All</option>
+              <option value={'paid'}>Paid</option>
+              <option value={'pending'}>Unpaid</option>
             </select>
 
-            <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-              <option>Date: Latest</option>
-              <option>Oldest First</option>
-              <option>Last 7 Days</option>
-              <option>This Month</option>
+            <select
+              onChange={(e) => {
+                setDate(e.target.value);
+                setCurrentPage(1);
+              }}
+              value={date}
+              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+            >
+              <option value={'latest'}>Date: Latest</option>
+              <option value={'oldest'}>Oldest First</option>
+              <option value={'last-7-days'}>Last 7 Days</option>
+              <option value={'this-month'}>This Month</option>
             </select>
           </div>
 
           {/* Mobile / Tablet collapsible filters */}
           {showFilters && (
             <div className="grid grid-cols-1 gap-3 lg:hidden">
-              <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-                <option>Status: All</option>
-                <option>Pending</option>
-                <option>Processing</option>
-                <option>shipped</option>
-                <option>Delivered</option>
-                <option>Cancelled</option>
+              <select
+                onChange={(e) => {
+                  setOrderStatus(e.target.value);
+                  setCurrentPage(1);
+                }}
+                value={orderStatus}
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              >
+                <option value={'all'}>Status: All</option>
+                <option value={'pending'}>Pending</option>
+                <option value={'processing'}>Processing</option>
+                <option value={'shipped'}>shipped</option>
+                <option value={'delivered'}>Delivered</option>
+                <option value={'cancelled'}>Cancelled</option>
               </select>
 
-              <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-                <option>Payment: All</option>
-                <option>Paid</option>
-                <option>Unpaid</option>
+              <select
+                onChange={(e) => {
+                  setPaymentStatus(e.target.value);
+                  setCurrentPage(1);
+                }}
+                value={paymentStatus}
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              >
+                <option value={'all'}>Payment: All</option>
+                <option value={'paid'}>Paid</option>
+                <option value={'pending'}>Unpaid</option>
               </select>
 
-              <select className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100">
-                <option>Date: Latest</option>
-                <option>Oldest First</option>
-                <option>Last 7 Days</option>
-                <option>This Month</option>
+              <select
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  setCurrentPage(1);
+                }}
+                value={date}
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-100"
+              >
+                <option value={'latest'}>Date: Latest</option>
+                <option value={'oldest'}>Oldest First</option>
+                <option value={'last-7-days'}>Last 7 Days</option>
+                <option value={'this-month'}>This Month</option>
               </select>
             </div>
           )}
@@ -206,7 +287,7 @@ const UserOrders = () => {
               <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                 <th className="pb-2 font-semibold">Order</th>
                 <th className="pb-2 font-semibold">Date</th>
-                <th className="pb-2 font-semibold">Items</th>
+                <th className="pb-2 font-semibold">Quantity</th>
                 <th className="pb-2 font-semibold">Amount</th>
                 <th className="pb-2 font-semibold">Payment</th>
                 <th className="pb-2 font-semibold">Status</th>
@@ -215,42 +296,42 @@ const UserOrders = () => {
             </thead>
 
             <tbody>
-              {orders.map((order) => (
-                <tr key={order.id} className="bg-slate-50/80">
+              {ordersList?.map((order) => (
+                <tr key={order._id} className="bg-slate-50/80">
                   <td className="rounded-l-2xl px-4 py-4">
                     <div>
-                      <p className="font-semibold text-slate-800">{order.id}</p>
+                      <p className="font-semibold text-slate-800">{order._id.slice(0, 8)}</p>
                       <p className="mt-1 text-xs text-slate-400">Giftly order</p>
                     </div>
                   </td>
 
-                  <td className="px-4 py-4 text-sm text-slate-500">{order.date}</td>
+                  <td className="px-4 py-4 text-sm text-slate-500">{formattedDate(order.createdAt)}</td>
 
-                  <td className="px-4 py-4 text-sm text-slate-600">{order.items} items</td>
+                  <td className="px-4 py-4 text-sm text-slate-600">{order.items.length}</td>
 
-                  <td className="px-4 py-4 text-sm font-medium text-slate-800">{order.amount}</td>
+                  <td className="px-4 py-4 text-sm font-medium text-slate-800">{order.total}</td>
 
                   <td className="px-4 py-4">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                        order.payment === 'Paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                        order.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                       }`}
                     >
-                      {order.payment}
+                      {order.paymentStatus}
                     </span>
                   </td>
 
                   <td className="px-4 py-4">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                        order.status === 'Delivered'
+                        order.orderStatus === 'delivered'
                           ? 'bg-emerald-50 text-emerald-600'
-                          : order.status === 'Processing'
+                          : order.orderStatus === 'processing'
                             ? 'bg-sky-50 text-sky-600'
                             : 'bg-amber-50 text-amber-600'
                       }`}
                     >
-                      {order.status}
+                      {order.orderStatus}
                     </span>
                   </td>
 
@@ -269,15 +350,15 @@ const UserOrders = () => {
 
       {/* Mobile Cards */}
       <section className="grid grid-cols-1 gap-4 lg:hidden">
-        {orders.map((order) => (
+        {ordersList.map((order) => (
           <div
-            key={order.id}
+            key={order._id}
             className="rounded-3xl border border-white/70 bg-white/85 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-semibold text-slate-800">{order.id}</p>
-                <p className="mt-1 text-sm text-slate-500">{order.date}</p>
+                <p className="font-semibold text-slate-800">{order._id.slice(0, 8)}</p>
+                <p className="mt-1 text-sm text-slate-500">{formattedDate(order.createdAt)}</p>
               </div>
 
               <button className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-500 transition hover:bg-rose-100">
@@ -288,13 +369,13 @@ const UserOrders = () => {
 
             <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50/80 p-3">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Items</p>
-                <p className="mt-1 text-sm text-slate-600">{order.items} items</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Quantity</p>
+                <p className="mt-1 text-sm text-slate-600">{order.items.length}</p>
               </div>
 
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Amount</p>
-                <p className="mt-1 text-sm font-medium text-slate-800">{order.amount}</p>
+                <p className="mt-1 text-sm font-medium text-slate-800">{order.total}</p>
               </div>
 
               <div>
@@ -302,10 +383,10 @@ const UserOrders = () => {
                 <div className="mt-1">
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                      order.payment === 'Paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                      order.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                     }`}
                   >
-                    {order.payment}
+                    {order.paymentStatus}
                   </span>
                 </div>
               </div>
@@ -315,14 +396,14 @@ const UserOrders = () => {
                 <div className="mt-1">
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                      order.status === 'Delivered'
+                      order.orderStatus === 'delivered'
                         ? 'bg-emerald-50 text-emerald-600'
-                        : order.status === 'Processing'
+                        : order.orderStatus === 'processing'
                           ? 'bg-sky-50 text-sky-600'
                           : 'bg-amber-50 text-amber-600'
                     }`}
                   >
-                    {order.status}
+                    {order.orderStatus}
                   </span>
                 </div>
               </div>
@@ -330,6 +411,7 @@ const UserOrders = () => {
           </div>
         ))}
       </section>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 };
