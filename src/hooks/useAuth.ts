@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 export type User = {
   _id: string;
+  profileImage: string;
   name: string;
   email: string;
   role: 'admin' | 'moderator' | 'user';

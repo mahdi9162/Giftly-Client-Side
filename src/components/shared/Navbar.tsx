@@ -15,6 +15,8 @@ const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  console.log(user);
+
   const totalItems = useCartStore((state) => state.getTotalItems());
 
   const nav = (

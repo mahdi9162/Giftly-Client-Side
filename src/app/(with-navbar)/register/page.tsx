@@ -2,15 +2,17 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
+import { CheckCircle2, Eye, EyeOff, ImagePlus } from 'lucide-react';
 import { useState } from 'react';
 import Container from '@/components/shared/Container';
 import { useForm, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { authAxios } from '@/lib/api/authAxios';
+import { uploadImageToImgbb } from '@/lib/imgbb';
 
 type RegisterFormData = {
   fullName: string;
+  profileImage: FileList;
   email: string;
   password: string;
   confirmPassword: string;
@@ -33,9 +35,21 @@ const RegisterPage = () => {
     name: 'password',
   });
 
+  const selectedProfileImage = useWatch({
+    control,
+    name: 'profileImage',
+  });
+
+  const selectedFileName = selectedProfileImage?.[0]?.name;
+
   const registerFormSubmit = async (data: RegisterFormData) => {
+    const imageFile = data.profileImage[0];
+
+    const profileImageUrl = await uploadImageToImgbb(imageFile);
+
     const userInfo = {
       name: data.fullName,
+      profileImage: profileImageUrl,
       email: data.email,
       password: data.password,
     };
@@ -64,7 +78,14 @@ const RegisterPage = () => {
           <div className="grid min-h-190 grid-cols-1 lg:grid-cols-2">
             {/* LEFT — image panel */}
             <div className="relative hidden lg:block">
-              <Image src="/assets/images/register_image.webp" alt="Giftly register visual" fill priority className="object-cover" />
+              <Image
+                src="/assets/images/register_image.webp"
+                alt="Giftly register visual"
+                fill
+                priority
+                sizes="300"
+                className="object-cover"
+              />
 
               {/* overlay */}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.10)_0%,rgba(15,23,42,0.30)_45%,rgba(15,23,42,0.70)_100%)]" />
@@ -150,6 +171,43 @@ const RegisterPage = () => {
                       }`}
                     />
                     {errors.fullName && <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>}
+                  </div>
+
+                  {/* profile image */}
+                  <div>
+                    <label
+                      className={`group flex cursor-pointer flex-col gap-3 rounded-2xl border bg-linear-to-r from-rose-50/70 to-pink-50/60 px-4 py-4 text-sm transition hover:border-primary hover:bg-white sm:flex-row sm:items-center sm:justify-between ${
+                        errors.profileImage ? 'border-red-500' : 'border-slate-200'
+                      }`}
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-primary shadow-sm">
+                          {selectedFileName ? <CheckCircle2 className="h-5 w-5" /> : <ImagePlus className="h-5 w-5" />}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <p className="max-w-37.5 truncate font-semibold text-slate-800 sm:max-w-55">
+                            {selectedFileName || 'Upload profile photo'}
+                          </p>
+                          <p className="mt-0.5 max-w-37.5 text-xs leading-4 text-slate-400 sm:max-w-none">
+                            {selectedFileName ? 'Image selected successfully' : 'JPG, PNG or WEBP'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <span className="w-full shrink-0 rounded-xl bg-primary px-4 py-2 text-center text-xs font-semibold text-white shadow-sm transition group-hover:scale-[1.02] sm:w-auto sm:group-hover:scale-105">
+                        {selectedFileName ? 'Change' : 'Choose'}
+                      </span>
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        {...register('profileImage', {
+                          required: 'Profile image is required',
+                        })}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
 
                   {/* email */}
