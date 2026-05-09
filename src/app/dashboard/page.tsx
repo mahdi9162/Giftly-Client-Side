@@ -31,7 +31,7 @@ const Page = () => {
   const { data: userOrders } = useQuery({
     queryKey: ['user-orders'],
     queryFn: async () => {
-      const res = await axiosInstance.get('/orders');
+      const res = await axiosInstance.get('/orders/overview');
       return res?.data?.data;
     },
   });
