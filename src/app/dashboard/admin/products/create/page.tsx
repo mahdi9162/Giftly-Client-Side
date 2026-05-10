@@ -6,6 +6,7 @@ import { PackagePlus } from 'lucide-react';
 import { ProductPreview } from '@/components/dashboard/admin/ProductPreview';
 import { uploadImageToImgbb } from '@/lib/imgbb';
 import { axiosInstance } from '@/lib/axios';
+import toast from 'react-hot-toast';
 
 type ProductFormData = {
   name: string;
@@ -87,9 +88,11 @@ export default function CreateProductPage() {
       const imageFile = data.image?.[0];
 
       if (!imageFile) {
-        alert('Please select an image');
+        toast.error('Please select an image');
         return;
       }
+
+      const loadingToast = toast.loading('Creating product...');
 
       //   image upload to imagebb
       const imageUrl = await uploadImageToImgbb(imageFile);
@@ -113,10 +116,10 @@ export default function CreateProductPage() {
 
       //  backend call
       await axiosInstance.post('/products', productPayload);
-      alert('Product created successfully!');
+      toast.success('Product created successfully!', { id: loadingToast });
     } catch (error) {
       console.error('Create product error:', error);
-      alert(error instanceof Error ? error.message : 'Something went wrong');
+      toast.error(error instanceof Error ? error.message : 'Something went wrong', { id: loadingToast });
     }
   };
 

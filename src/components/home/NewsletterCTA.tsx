@@ -5,6 +5,7 @@ import Container from '../shared/Container';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/axios';
+import toast from 'react-hot-toast';
 
 const bullets = ['Curated gift picks for every occasion', 'Seasonal ideas delivered to your inbox', 'No spam. Unsubscribe anytime.'];
 
@@ -28,12 +29,12 @@ const NewsletterCTA = () => {
     mutationFn: (payload: NewsletterFormData) => axiosInstance.post('/newsletter/subscribe', payload),
 
     onSuccess: (res) => {
-      alert(res.data.message || 'Subscribed successfully!');
+      toast.success(res.data.message || 'Subscribed successfully!');
       reset();
     },
 
     onError: () => {
-      alert('Failed to subscribe');
+      toast.error('Failed to subscribe');
     },
   });
 

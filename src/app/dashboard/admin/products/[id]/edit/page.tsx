@@ -7,6 +7,7 @@ import { PencilLine } from 'lucide-react';
 import { axiosInstance } from '@/lib/axios';
 import { uploadImageToImgbb } from '@/lib/imgbb';
 import { ProductPreview } from '@/components/dashboard/admin/ProductPreview';
+import toast from 'react-hot-toast';
 
 type ProductFormData = {
   name: string;
@@ -138,7 +139,7 @@ const EditProductPage = () => {
         });
       } catch (error) {
         console.error('Fetch product error:', error);
-        alert(error instanceof Error ? error.message : 'Failed to load product');
+        toast.error(error instanceof Error ? error.message : 'Failed to load product');
       } finally {
         setIsLoading(false);
       }
@@ -150,6 +151,8 @@ const EditProductPage = () => {
   const handleEditProductForm = async (data: ProductFormData) => {
     try {
       setIsSubmitting(true);
+
+      const loadingToast = toast.loading('Updating product...');
 
       let imageUrl = existingImage;
 
@@ -177,11 +180,11 @@ const EditProductPage = () => {
 
       await axiosInstance.patch(`/admin/products/${productId}`, productPayload);
 
-      alert('Product updated successfully!');
+      toast.success('Product updated successfully!', { id: loadingToast });
       router.push('/dashboard/admin/products');
     } catch (error) {
       console.error('Update product error:', error);
-      alert(error instanceof Error ? error.message : 'Something went wrong');
+      toast.error(error instanceof Error ? error.message : 'Something went wrong', { id: loadingToast });
     } finally {
       setIsSubmitting(false);
     }

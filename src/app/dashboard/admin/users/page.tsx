@@ -8,6 +8,7 @@ import { formattedDate } from '@/lib/utils';
 import Pagination from '@/components/shared/Pagination';
 import { useAuth } from '@/hooks/useAuth';
 import Swal from 'sweetalert2';
+import toast from 'react-hot-toast';
 
 type User = {
   _id: string;
@@ -75,6 +76,12 @@ const AdminUser = () => {
           },
         };
       });
+
+      toast.success('User status updated successfully');
+    },
+
+    onError: () => {
+      toast.error('Failed to update user status');
     },
   });
 

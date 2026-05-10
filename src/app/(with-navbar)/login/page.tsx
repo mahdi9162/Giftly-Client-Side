@@ -8,6 +8,7 @@ import Container from '@/components/shared/Container';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { authAxios } from '@/lib/api/authAxios';
+import toast from 'react-hot-toast';
 
 type LoginFormData = {
   email: string;
@@ -29,6 +30,8 @@ const LoginPage = () => {
       password: data.password,
     };
 
+    const loadingToast = toast.loading('Signing you in...');
+
     try {
       const res = await authAxios.post('/api/auth/login', userInfo);
 
@@ -38,11 +41,13 @@ const LoginPage = () => {
         throw new Error(result.message || 'Login failed');
       }
 
+      toast.success('Welcome back!', { id: loadingToast });
+
       router.push('/');
       router.refresh();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log(error.message);
+      toast.error(error.message || 'Login failed. Please check your credentials.', { id: loadingToast });
     }
   };
 
