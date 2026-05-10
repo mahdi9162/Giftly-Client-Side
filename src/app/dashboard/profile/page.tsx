@@ -138,7 +138,7 @@ const ProfilePage = () => {
         <div className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl md:p-6">
           <div className="flex flex-col items-center text-center">
             {/* Profile Imgae update card */}
-            <ProfileImageCard />
+            <ProfileImageCard user={user} />
 
             {/* password security */}
             <PasswordUpdateCard />

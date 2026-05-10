@@ -1,28 +1,74 @@
+import { User } from '@/hooks/useAuth';
+import { axiosInstance } from '@/lib/axios';
+import { uploadImageToImgbb } from '@/lib/imgbb';
 import { Camera, ShieldCheck, UploadCloud } from 'lucide-react';
-import React from 'react';
+import Image from 'next/image';
+import React, { useState } from 'react';
 
-const ProfileImageCard = () => {
+type ProfileImageCardProps = {
+  user: User | null;
+};
+
+const ProfileImageCard = ({ user }: ProfileImageCardProps) => {
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+
+  const handleProfileImageUpdate = async () => {
+    if (!selectedImageFile) {
+      alert('Please select an image first.');
+      return;
+    }
+
+    const profileImage = await uploadImageToImgbb(selectedImageFile);
+
+    await axiosInstance.patch('/users/me/profile-image', { profileImage });
+
+    alert('Profile image updated successfully!');
+  };
   return (
     <>
       {/* profile image */}
       <div className="relative">
         <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-linear-to-r from-primary via-secondary to-accent text-3xl font-bold text-white shadow-lg shadow-rose-200/50 md:h-32 md:w-32">
-          M
+          {previewImage ? (
+            <Image src={previewImage} alt="Preview Image" width={128} height={128} className="h-full w-full object-cover" />
+          ) : user?.profileImage ? (
+            <Image src={user.profileImage} alt="Profile Image" width={128} height={128} className="h-full w-full object-cover" />
+          ) : (
+            <span>{user?.name?.charAt(0)}</span>
+          )}
         </div>
 
-        <button className="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border border-white bg-white text-primary shadow-md transition hover:bg-rose-50">
+        <label
+          htmlFor="profile-image"
+          className="absolute -bottom-1 -right-1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-4 border-secondary bg-white text-primary shadow-md transition hover:bg-rose-50"
+        >
           <Camera className="h-4 w-4" />
-        </button>
+        </label>
+
+        <input
+          id="profile-image"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            setSelectedImageFile(file);
+            setPreviewImage(URL.createObjectURL(file));
+          }}
+        />
       </div>
 
       {/* user info */}
-      <h2 className="mt-4 text-xl font-semibold text-slate-900">Mahdi Hasan</h2>
+      <h2 className="mt-4 text-xl font-semibold text-slate-900">{user?.name}</h2>
       <p className="mt-1 text-sm text-slate-500">Giftly Account</p>
 
       {/* image update */}
       <button
         type="button"
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-primary to-accent px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01]"
+        onClick={handleProfileImageUpdate}
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-primary to-accent px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200/50 transition hover:scale-[1.01] cursor-pointer"
       >
         <UploadCloud className="h-4 w-4" />
         Update Profile Image
