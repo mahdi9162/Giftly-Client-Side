@@ -8,6 +8,8 @@ import PersonalInfoCard from '@/components/dashboard/myProfile/PersonalInfoCard'
 import DefaultShippingAddCard from '@/components/dashboard/myProfile/DefaultShippingAddCard';
 import { useAuth } from '@/hooks/useAuth';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/axios';
 
 export type ProfileFormData = {
   name: string;
@@ -36,7 +38,10 @@ const ProfilePage = () => {
     },
   });
 
-  const { reset } = form;
+  const {
+    reset,
+    formState: { dirtyFields },
+  } = form;
 
   useEffect(() => {
     if (user) {
@@ -53,9 +58,74 @@ const ProfilePage = () => {
     }
   }, [user, reset]);
 
-  // payload and api call for profile info + shipping address
+  // payload and call api for profile info + shipping address
+
+  const queryClient = useQueryClient();
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (payload: Partial<ProfileFormData>) => axiosInstance.patch('/users/me/profile', payload),
+
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+
+      if (res?.data?.data) {
+        reset({
+          name: res.data.data.name || '',
+          phone: res.data.data.phone || '',
+          address: {
+            street: res.data.data.address?.street || '',
+            city: res.data.data.address?.city || '',
+            postalCode: res.data.data.address?.postalCode || '',
+            country: res.data.data.address?.country || '',
+          },
+        });
+      }
+
+      alert('Profile updated successfully!');
+    },
+
+    onError: () => {
+      alert('Failed to update profile.');
+    },
+  });
+
   const handleProfileInfoUpdate = (data: ProfileFormData) => {
-    console.log(data);
+    const payload: Partial<ProfileFormData> = {};
+
+    if (dirtyFields.name) {
+      payload.name = data.name;
+    }
+
+    if (dirtyFields.phone) {
+      payload.phone = data.phone;
+    }
+
+    if (dirtyFields.address) {
+      payload.address = {};
+
+      if (dirtyFields.address.street) {
+        payload.address.street = data.address.street;
+      }
+
+      if (dirtyFields.address.city) {
+        payload.address.city = data.address.city;
+      }
+
+      if (dirtyFields.address.postalCode) {
+        payload.address.postalCode = data.address.postalCode;
+      }
+
+      if (dirtyFields.address.country) {
+        payload.address.country = data.address.country;
+      }
+    }
+
+    if (Object.keys(payload).length === 0) {
+      alert('No changes to update.');
+      return;
+    }
+
+    updateProfileMutation.mutate(payload);
   };
 
   return (
