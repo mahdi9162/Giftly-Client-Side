@@ -4,6 +4,7 @@ import { uploadImageToImgbb } from '@/lib/imgbb';
 import { Camera, ShieldCheck, UploadCloud } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 type ProfileImageCardProps = {
   user: User | null;
@@ -15,15 +16,21 @@ const ProfileImageCard = ({ user }: ProfileImageCardProps) => {
 
   const handleProfileImageUpdate = async () => {
     if (!selectedImageFile) {
-      alert('Please select an image first.');
+      toast.error('Please select an image first.');
       return;
     }
 
-    const profileImage = await uploadImageToImgbb(selectedImageFile);
+    const loadingToast = toast.loading('Updating profile image...');
 
-    await axiosInstance.patch('/users/me/profile-image', { profileImage });
+    try {
+      const profileImage = await uploadImageToImgbb(selectedImageFile);
 
-    alert('Profile image updated successfully!');
+      await axiosInstance.patch('/users/me/profile-image', { profileImage });
+
+      toast.success('Profile image updated successfully!', { id: loadingToast });
+    } catch (error) {
+      toast.error('Failed to update profile image. Please try again.', { id: loadingToast });
+    }
   };
   return (
     <>

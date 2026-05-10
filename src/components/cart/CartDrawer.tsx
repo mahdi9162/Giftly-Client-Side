@@ -6,6 +6,7 @@ import { useCartStore } from '@/store/useCartStore';
 import CartItems from './CartItems';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 type CartDrawerProps = {
   isOpen: boolean;
@@ -21,7 +22,7 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
 
   const handleCheckout = () => {
     if (items.length === 0) {
-      alert('Cart is empty');
+      toast.error('Cart is empty');
       return;
     }
     onClose();

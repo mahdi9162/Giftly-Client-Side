@@ -52,6 +52,10 @@ body {
   font-family: var(--font-geist-mono);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Hero Section */
 .hero-bg {
   position: relative;

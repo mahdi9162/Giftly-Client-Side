@@ -3,6 +3,7 @@
 import { axiosInstance } from '@/lib/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, CreditCard, PackageCheck, Truck } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
@@ -47,6 +48,12 @@ const OrderActionCell = ({ initialStatus = 'pending', initialPaymentStatus = 'pe
           },
         };
       });
+
+      toast.success('Order status updated successfully');
+    },
+
+    onError: () => {
+      toast.error('Failed to update order status');
     },
   });
 

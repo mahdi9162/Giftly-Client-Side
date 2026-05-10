@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/axios';
+import toast from 'react-hot-toast';
 
 export type ProfileFormData = {
   name: string;
@@ -81,11 +82,11 @@ const ProfilePage = () => {
         });
       }
 
-      alert('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
     },
 
     onError: () => {
-      alert('Failed to update profile.');
+      toast.error('Failed to update profile.');
     },
   });
 
@@ -121,7 +122,7 @@ const ProfilePage = () => {
     }
 
     if (Object.keys(payload).length === 0) {
-      alert('No changes to update.');
+      toast('No changes to update.');
       return;
     }
 

@@ -7,6 +7,7 @@ import { PencilLine } from 'lucide-react';
 import { axiosInstance } from '@/lib/axios';
 import { uploadImageToImgbb } from '@/lib/imgbb';
 import { ProductPreview } from '@/components/dashboard/admin/ProductPreview';
+import toast from 'react-hot-toast';
 
 type ProductFormData = {
   name: string;
@@ -138,7 +139,7 @@ const EditProductPage = () => {
         });
       } catch (error) {
         console.error('Fetch product error:', error);
-        alert(error instanceof Error ? error.message : 'Failed to load product');
+        toast.error(error instanceof Error ? error.message : 'Failed to load product');
       } finally {
         setIsLoading(false);
       }
@@ -147,45 +148,52 @@ const EditProductPage = () => {
     fetchProduct();
   }, [productId, reset]);
 
-  const handleEditProductForm = async (data: ProductFormData) => {
-    try {
-      setIsSubmitting(true);
+const handleEditProductForm = async (data: ProductFormData) => {
+  let loadingToast: string | undefined;
 
-      let imageUrl = existingImage;
+  try {
+    setIsSubmitting(true);
 
-      const selectedImage = data.image?.[0];
+    loadingToast = toast.loading('Updating product...');
 
-      if (selectedImage) {
-        imageUrl = await uploadImageToImgbb(selectedImage);
-      }
+    let imageUrl = existingImage;
 
-      const productPayload = {
-        name: data.name,
-        category: data.category,
-        description: data.description,
-        price: data.price,
-        image: imageUrl,
-        alt: data.alt,
-        stock: data.stock,
-        status: data.status,
-        featured: data.featured,
-        featuredOrder: data.featured ? data.featuredOrder : undefined,
-        badge: data.badge || undefined,
-        rating: data.rating,
-        reviews: data.reviews,
-      };
+    const selectedImage = data.image?.[0];
 
-      await axiosInstance.patch(`/admin/products/${productId}`, productPayload);
-
-      alert('Product updated successfully!');
-      router.push('/dashboard/admin/products');
-    } catch (error) {
-      console.error('Update product error:', error);
-      alert(error instanceof Error ? error.message : 'Something went wrong');
-    } finally {
-      setIsSubmitting(false);
+    if (selectedImage) {
+      imageUrl = await uploadImageToImgbb(selectedImage);
     }
-  };
+
+    const productPayload = {
+      name: data.name,
+      category: data.category,
+      description: data.description,
+      price: data.price,
+      image: imageUrl,
+      alt: data.alt,
+      stock: data.stock,
+      status: data.status,
+      featured: data.featured,
+      featuredOrder: data.featured ? data.featuredOrder : undefined,
+      badge: data.badge || undefined,
+      rating: data.rating,
+      reviews: data.reviews,
+    };
+
+    await axiosInstance.patch(`/admin/products/${productId}`, productPayload);
+
+    toast.success('Product updated successfully!', { id: loadingToast });
+    router.push('/dashboard/admin/products');
+  } catch (error) {
+    console.error('Update product error:', error);
+
+    toast.error(error instanceof Error ? error.message : 'Something went wrong', {
+      id: loadingToast,
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   if (isLoading) {
     return (

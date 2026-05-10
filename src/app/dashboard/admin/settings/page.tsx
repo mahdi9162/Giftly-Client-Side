@@ -8,6 +8,7 @@ import { axiosInstance } from '@/lib/axios';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import Image from 'next/image';
 import { uploadImageToImgbb } from '@/lib/imgbb';
+import toast from 'react-hot-toast';
 
 type StoreFormData = {
   storeName: string;
@@ -59,7 +60,7 @@ const PageSetting = () => {
       });
     } catch (error) {
       console.error(error);
-      alert('Logo upload failed');
+      toast.error('Logo upload failed');
     } finally {
       setIsLogoUploading(false);
     }
@@ -83,11 +84,11 @@ const PageSetting = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['store-settings'] });
-      alert('Store settings updated successfully!');
+      toast.success('Store settings updated successfully!');
     },
 
     onError: () => {
-      alert('Failed to update store settings.');
+      toast.error('Failed to update store settings.');
     },
   });
 
@@ -100,7 +101,7 @@ const PageSetting = () => {
     });
 
     if (Object.keys(payload).length === 0) {
-      alert('No changes to update.');
+      toast('No changes to update.');
       return;
     }
 

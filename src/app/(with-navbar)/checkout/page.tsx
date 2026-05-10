@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCartStore } from '@/store/useCartStore';
 import { axiosInstance } from '@/lib/axios';
 import { useAuth } from '@/hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Checkout = () => {
   const items = useCartStore((state) => state.items);
@@ -50,14 +51,14 @@ const Checkout = () => {
   if (loading) return;
 
   if (!user?._id) {
-    alert('Please login first');
+    toast.error('Please login first');
     return;
   }
 
   const checkoutFormSubmit = async (data: CheckoutFormData) => {
     try {
       if (items.length === 0) {
-        alert('Cart is empty');
+        toast.error('Cart is empty');
         return;
       }
 
@@ -85,15 +86,17 @@ const Checkout = () => {
       if (data.paymentMethod === 'cod') {
         await axiosInstance.post('', payload);
 
-        alert('Order placed successfully');
+        toast.success('Order placed successfully');
         return;
       }
+
+      const loadingToast = toast.loading('Redirecting to payment...');
 
       const res = await axiosInstance.post('/payments/create-checkout-session', payload);
 
       window.location.assign(res.data.url);
     } catch (error) {
-      console.log(error);
+      toast.error('Payment setup failed. Please try again.');
     }
   };
 

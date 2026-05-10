@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 type PasswordFormData = {
   currentPassword: string;
@@ -38,12 +39,12 @@ const PasswordUpdateCard = () => {
     mutationFn: (payload: { currentPassword: string; newPassword: string }) => axiosInstance.patch('/users/me/password', payload),
 
     onSuccess: () => {
-      alert('Password updated successfully!');
+      toast.success('Password updated successfully!');
       reset();
     },
 
     onError: () => {
-      alert('Failed to update password.');
+      toast.error('Failed to update password.');
     },
   });
 

@@ -9,6 +9,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { authAxios } from '@/lib/api/authAxios';
 import { uploadImageToImgbb } from '@/lib/imgbb';
+import toast from 'react-hot-toast';
 
 type RegisterFormData = {
   fullName: string;
@@ -43,18 +44,20 @@ const RegisterPage = () => {
   const selectedFileName = selectedProfileImage?.[0]?.name;
 
   const registerFormSubmit = async (data: RegisterFormData) => {
-    const imageFile = data.profileImage[0];
-
-    const profileImageUrl = await uploadImageToImgbb(imageFile);
-
-    const userInfo = {
-      name: data.fullName,
-      profileImage: profileImageUrl,
-      email: data.email,
-      password: data.password,
-    };
+    const loadingToast = toast.loading('Creating your account...');
 
     try {
+      const imageFile = data.profileImage[0];
+
+      const profileImageUrl = await uploadImageToImgbb(imageFile);
+
+      const userInfo = {
+        name: data.fullName,
+        profileImage: profileImageUrl,
+        email: data.email,
+        password: data.password,
+      };
+
       const res = await authAxios.post('/api/auth/register', userInfo);
 
       const result = res.data;
@@ -63,11 +66,13 @@ const RegisterPage = () => {
         throw new Error(result.message || 'Registration failed');
       }
 
+      toast.success('Account created successfully! Welcome to Giftly', { id: loadingToast });
+
       router.push('/');
       router.refresh();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log(error.message);
+      toast.error(error.message || 'Registration failed. Please try again.', { id: loadingToast });
     }
   };
 
