@@ -12,7 +12,8 @@ type DashboardLayoutProps = {
   children: ReactNode;
 };
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const { logout } = useAuth();
   const pathname = usePathname();
 
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -27,95 +28,105 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const desktopSidebarWidth = isSidebarCollapsed ? 'lg:w-[92px]' : 'lg:w-[280px]';
   const desktopContentPadding = isSidebarCollapsed ? 'lg:pl-[92px]' : 'lg:pl-[280px]';
 
-  const renderSidebarContent = (collapsed = false, isMobile = false) => (
-    <>
-      {/* Brand */}
-      <div className="border-b border-slate-100/80 px-4 py-4">
-        <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between gap-3'}`}>
-          <div className="overflow-hidden">
-            <div className={`transition-all duration-300 ease-in-out ${collapsed ? 'scale-90 opacity-100' : 'scale-100 opacity-100'}`}>
-              <Logo />
+  const renderSidebarContent = (collapsed = false, isMobile = false) => {
+    const isProfileActive = pathname === '/dashboard/profile';
+    return (
+      <>
+        {/* Brand */}
+        <div className="border-b border-slate-100/80 px-4 py-4">
+          <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between gap-3'}`}>
+            <div className="overflow-hidden">
+              <div className={`transition-all duration-300 ease-in-out ${collapsed ? 'scale-90 opacity-100' : 'scale-100 opacity-100'}`}>
+                <Logo />
+              </div>
             </div>
-          </div>
 
-          {!collapsed && isMobile && (
-            <button
-              onClick={() => setMobileSidebarOpen(false)}
-              className="grid size-10 place-items-center rounded-2xl border border-rose-100 bg-white text-slate-600 shadow-sm"
-            >
-              <X className="size-5" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto px-3 py-5 text-slate-800">
-        <div className="mb-4 overflow-hidden px-3">
-          <p
-            className={`whitespace-nowrap text-[10px] font-black uppercase tracking-[0.24em] ${
-              role === 'admin' ? 'text-primary' : 'text-slate-400'
-            } transition-all duration-300 ease-in-out ${collapsed ? '-translate-x-2 opacity-0' : 'translate-x-0 opacity-100'}`}
-          >
-            {sectionTitle}
-          </p>
-        </div>
-
-        <ul className="space-y-1.5">
-          {sidebarRoutes.map((item) => {
-            const isActive = pathname === item.href;
-
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => isMobile && setMobileSidebarOpen(false)}
-                  title={collapsed ? item.label : ''}
-                  className={`group flex items-center rounded-2xl transition-all duration-300 ${
-                    isActive
-                      ? 'bg-linear-to-r from-primary to-fuchsia-500 text-white shadow-lg shadow-primary/20'
-                      : 'text-slate-500 hover:bg-rose-50 hover:text-slate-800'
-                  } ${collapsed ? 'justify-center px-0 py-3.5' : 'gap-3 px-4 py-3.5'}`}
-                >
-                  <item.icon className="size-5 shrink-0" />
-                  <span
-                    className={`overflow-hidden whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out ${
-                      collapsed ? 'max-w-0 -translate-x-2 opacity-0' : 'max-w-45 translate-x-0 opacity-100'
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      {/* Footer / Account */}
-      <div className="border-t border-slate-100/80 p-4">
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100'}`}
-        >
-          <div className="rounded-2xl border border-orange-100 bg-linear-to-br from-orange-50 via-rose-50 to-violet-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Account Settings</p>
-            <div className="mt-3 space-y-2">
-              <Link
-                href="/dashboard/profile"
-                onClick={() => isMobile && setMobileSidebarOpen(false)}
-                className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-white"
+            {!collapsed && isMobile && (
+              <button
+                onClick={() => setMobileSidebarOpen(false)}
+                className="grid size-10 place-items-center rounded-2xl border border-rose-100 bg-white text-slate-600 shadow-sm"
               >
-                My Profile
-              </Link>
-              <button className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-rose-500 transition hover:bg-white">
-                Log Out
+                <X className="size-5" />
               </button>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto px-3 py-5 text-slate-800">
+          <div className="mb-4 overflow-hidden px-3">
+            <p
+              className={`whitespace-nowrap text-[10px] font-black uppercase tracking-[0.24em] ${
+                role === 'admin' ? 'text-primary' : 'text-slate-400'
+              } transition-all duration-300 ease-in-out ${collapsed ? '-translate-x-2 opacity-0' : 'translate-x-0 opacity-100'}`}
+            >
+              {sectionTitle}
+            </p>
+          </div>
+
+          <ul className="space-y-1.5">
+            {sidebarRoutes.map((item) => {
+              const isActive = pathname === item.href;
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => isMobile && setMobileSidebarOpen(false)}
+                    title={collapsed ? item.label : ''}
+                    className={`group flex items-center rounded-2xl transition-all duration-300 ${
+                      isActive
+                        ? 'bg-linear-to-r from-primary to-fuchsia-500 text-white shadow-lg shadow-primary/20'
+                        : 'text-slate-500 hover:bg-rose-50 hover:text-slate-800'
+                    } ${collapsed ? 'justify-center px-0 py-3.5' : 'gap-3 px-4 py-3.5'}`}
+                  >
+                    <item.icon className="size-5 shrink-0" />
+                    <span
+                      className={`overflow-hidden whitespace-nowrap text-sm font-bold transition-all duration-300 ease-in-out ${
+                        collapsed ? 'max-w-0 -translate-x-2 opacity-0' : 'max-w-45 translate-x-0 opacity-100'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* Footer / Account */}
+        <div className="border-t border-slate-100/80 p-4">
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100'}`}
+          >
+            <div className="rounded-2xl border border-orange-100 bg-linear-to-br from-orange-50 via-rose-50 to-violet-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Account Settings</p>
+              <div className="mt-3 space-y-2">
+                <Link
+                  href="/dashboard/profile"
+                  onClick={() => isMobile && setMobileSidebarOpen(false)}
+                  className={`block rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                    isProfileActive
+                      ? 'bg-linear-to-r from-primary to-fuchsia-500 text-white shadow-lg shadow-primary/20'
+                      : 'text-slate-700 hover:bg-white'
+                  }`}
+                >
+                  My Profile
+                </Link>
+                <button
+                  onClick={logout}
+                  className="w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-rose-500 transition hover:bg-white cursor-pointer"
+                >
+                  Log Out
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-rose-50 via-orange-50/40 to-violet-50/50">
@@ -191,7 +202,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     </Link>
                   </li>
                   <li>
-                    <button className="rounded-2xl py-3 font-bold text-rose-500 hover:bg-rose-50 cursor-pointer">Log Out</button>
+                    <button onClick={logout} className="rounded-2xl py-3 font-bold text-rose-500 hover:bg-rose-50 cursor-pointer">
+                      Log Out
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -204,4 +217,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLayout;
