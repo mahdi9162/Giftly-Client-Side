@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Twitter, Youtube, Facebook } from 'lucide-react';
+import { Linkedin, Youtube, Facebook } from 'lucide-react';
 import Container from './Container';
 import Image from 'next/image';
 
@@ -18,9 +18,15 @@ const supportLinks = [
 ];
 
 const socials = [
-  { icon: Twitter, label: 'Twitter', href: '#' },
-  { icon: Youtube, label: 'YouTube', href: '#' },
-  { icon: Facebook, label: 'Facebook', href: '#' },
+  { icon: Linkedin, label: 'Twitter', href: 'https://www.linkedin.com/in/mahdi9162/', target: '_blank', rel: 'noopener noreferrer' },
+  {
+    icon: Youtube,
+    label: 'YouTube',
+    href: 'https://youtu.be/4KTFD0SDDOA?si=v8hN9477P5ezBIaw',
+    target: '_blank',
+    rel: 'noopener noreferrer',
+  },
+  { icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/mahdi916', target: '_blank', rel: 'noopener noreferrer' },
 ];
 
 const Footer = () => {
@@ -32,11 +38,17 @@ const Footer = () => {
             {/* Brand */}
             <div className="flex flex-col items-center">
               <Link href="/">
-                <Image src={'/assets/logo/logo-dark.svg'} alt="Giftly logo" width={120} height={120} className="w-30 h-auto" />
+                <Image
+                  src={'/assets/logo/logo-dark.svg'}
+                  alt="Giftly logo"
+                  width={120}
+                  height={120}
+                  className="w-30 h-auto md:-translate-x-16"
+                />
               </Link>
 
-              <p className="mt-4 max-w-55 text-sm leading-relaxed text-white/70">
-                Thoughtful gifting, powered by AI. Helping you find the perfect gift — effortlessly, every time.
+              <p className="mt-4 max-w-55 text-sm leading-relaxed text-white/70 md:text-start">
+                Thoughtful gifting, powered by AI. Helping you find the perfect gift effortlessly, every time.
               </p>
             </div>
 
@@ -75,10 +87,12 @@ const Footer = () => {
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white">Follow Us</p>
 
               <div className="mt-4 flex items-center justify-center gap-3">
-                {socials.map(({ icon: Icon, label, href }) => (
+                {socials.map(({ icon: Icon, label, href, target, rel }) => (
                   <a
                     key={label}
                     href={href}
+                    target={target}
+                    rel={rel}
                     aria-label={label}
                     className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/70 transition-all hover:border-pink-400/30 hover:bg-white/10 hover:text-pink-400"
                   >
