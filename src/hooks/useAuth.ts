@@ -8,6 +8,14 @@ export type User = {
   name: string;
   email: string;
   role: 'admin' | 'moderator' | 'user';
+
+  phone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  };
 };
 
 type UseAuthReturn = {

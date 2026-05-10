@@ -15,8 +15,6 @@ const Navbar = () => {
   const { user, loading, logout } = useAuth();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  console.log(user);
-
   const totalItems = useCartStore((state) => state.getTotalItems());
 
   const nav = (
@@ -129,7 +127,13 @@ const Navbar = () => {
                     <div className="dropdown dropdown-end">
                       <div tabIndex={0} role="button" className="avatar avatar-online cursor-pointer transition hover:scale-105">
                         <div className="w-10 md:w-12 rounded-full">
-                          <Image src="/assets/images/avatar.svg" alt="User Avatar" width={48} height={48} className="object-cover" />
+                          <Image
+                            src={`${user?.profileImage} || /assets/images/avatar.svg`}
+                            alt="User Avatar"
+                            width={48}
+                            height={48}
+                            className="object-cover"
+                          />
                         </div>
                       </div>
 
