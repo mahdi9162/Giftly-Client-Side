@@ -148,47 +148,52 @@ const EditProductPage = () => {
     fetchProduct();
   }, [productId, reset]);
 
-  const handleEditProductForm = async (data: ProductFormData) => {
-    try {
-      setIsSubmitting(true);
+const handleEditProductForm = async (data: ProductFormData) => {
+  let loadingToast: string | undefined;
 
-      const loadingToast = toast.loading('Updating product...');
+  try {
+    setIsSubmitting(true);
 
-      let imageUrl = existingImage;
+    loadingToast = toast.loading('Updating product...');
 
-      const selectedImage = data.image?.[0];
+    let imageUrl = existingImage;
 
-      if (selectedImage) {
-        imageUrl = await uploadImageToImgbb(selectedImage);
-      }
+    const selectedImage = data.image?.[0];
 
-      const productPayload = {
-        name: data.name,
-        category: data.category,
-        description: data.description,
-        price: data.price,
-        image: imageUrl,
-        alt: data.alt,
-        stock: data.stock,
-        status: data.status,
-        featured: data.featured,
-        featuredOrder: data.featured ? data.featuredOrder : undefined,
-        badge: data.badge || undefined,
-        rating: data.rating,
-        reviews: data.reviews,
-      };
-
-      await axiosInstance.patch(`/admin/products/${productId}`, productPayload);
-
-      toast.success('Product updated successfully!', { id: loadingToast });
-      router.push('/dashboard/admin/products');
-    } catch (error) {
-      console.error('Update product error:', error);
-      toast.error(error instanceof Error ? error.message : 'Something went wrong', { id: loadingToast });
-    } finally {
-      setIsSubmitting(false);
+    if (selectedImage) {
+      imageUrl = await uploadImageToImgbb(selectedImage);
     }
-  };
+
+    const productPayload = {
+      name: data.name,
+      category: data.category,
+      description: data.description,
+      price: data.price,
+      image: imageUrl,
+      alt: data.alt,
+      stock: data.stock,
+      status: data.status,
+      featured: data.featured,
+      featuredOrder: data.featured ? data.featuredOrder : undefined,
+      badge: data.badge || undefined,
+      rating: data.rating,
+      reviews: data.reviews,
+    };
+
+    await axiosInstance.patch(`/admin/products/${productId}`, productPayload);
+
+    toast.success('Product updated successfully!', { id: loadingToast });
+    router.push('/dashboard/admin/products');
+  } catch (error) {
+    console.error('Update product error:', error);
+
+    toast.error(error instanceof Error ? error.message : 'Something went wrong', {
+      id: loadingToast,
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   if (isLoading) {
     return (

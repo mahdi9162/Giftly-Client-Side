@@ -82,46 +82,48 @@ export default function CreateProductPage() {
     return '';
   }, [imageFile]);
 
-  const handleProductForm = async (data: ProductFormData) => {
-    try {
-      // image file chk
-      const imageFile = data.image?.[0];
+ const handleProductForm = async (data: ProductFormData) => {
+  let loadingToast: string | undefined;
 
-      if (!imageFile) {
-        toast.error('Please select an image');
-        return;
-      }
+  try {
+    const imageFile = data.image?.[0];
 
-      const loadingToast = toast.loading('Creating product...');
-
-      //   image upload to imagebb
-      const imageUrl = await uploadImageToImgbb(imageFile);
-
-      // final product payload
-      const productPayload = {
-        name: data.name,
-        category: data.category,
-        description: data.description,
-        price: data.price,
-        image: imageUrl,
-        alt: data.alt,
-        stock: data.stock,
-        status: data.status,
-        featured: data.featured,
-        featuredOrder: data.featured ? data.featuredOrder : undefined,
-        badge: data.badge || undefined,
-        rating: data.rating,
-        reviews: data.reviews,
-      };
-
-      //  backend call
-      await axiosInstance.post('/products', productPayload);
-      toast.success('Product created successfully!', { id: loadingToast });
-    } catch (error) {
-      console.error('Create product error:', error);
-      toast.error(error instanceof Error ? error.message : 'Something went wrong', { id: loadingToast });
+    if (!imageFile) {
+      toast.error('Please select an image');
+      return;
     }
-  };
+
+    loadingToast = toast.loading('Creating product...');
+
+    const imageUrl = await uploadImageToImgbb(imageFile);
+
+    const productPayload = {
+      name: data.name,
+      category: data.category,
+      description: data.description,
+      price: data.price,
+      image: imageUrl,
+      alt: data.alt,
+      stock: data.stock,
+      status: data.status,
+      featured: data.featured,
+      featuredOrder: data.featured ? data.featuredOrder : undefined,
+      badge: data.badge || undefined,
+      rating: data.rating,
+      reviews: data.reviews,
+    };
+
+    await axiosInstance.post('/products', productPayload);
+
+    toast.success('Product created successfully!', { id: loadingToast });
+  } catch (error) {
+    console.error('Create product error:', error);
+
+    toast.error(error instanceof Error ? error.message : 'Something went wrong', {
+      id: loadingToast,
+    });
+  }
+};
 
   return (
     <div className="space-y-6">
